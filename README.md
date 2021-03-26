@@ -93,10 +93,109 @@ Chorest is an app that allows users to find the shortest route between locations
 ### [BONUS] Interactive Prototype
 
 ## Schema 
-[This section will be completed in Unit 9]
 ### Models
-[Add table of models]
+
+| Property      | Type    | Description                                                             |
+| ------------- | ------- | ----------------------------------------------------------------------- |
+| userID        | String  | id indicating current user                                              |
+| chorest       | Chorest | Chorest class calculates routes depending on inputted chores/activities |
+| chorest.start | String  | Chooses starting location                                               |
+| chorest.title | String  | Displays the label of the chorest                                       |
+| chorest.route | Array   | Returns calculated shortest route as locations from Google Maps         |
+| chorest_list  | Array   | The array displays a list of chorest elements                           |
+
+
+
 ### Networking
-- [Add list of network requests by screen ]
-- [Create basic snippets for each Parse network request]
+- Login
+    - "GET" request to call Firebase Authentication for user login or signup
+    ```java
+    // Choose authentication providers
+    List<AuthUI.IdpConfig> providers = Arrays.asList(
+            new AuthUI.IdpConfig.EmailBuilder().build(),
+            new AuthUI.IdpConfig.GoogleBuilder().build());
+
+    // Create and launch sign-in intent
+    startActivityForResult(
+            AuthUI.getInstance()
+                    .createSignInIntentBuilder()
+                    .setAvailableProviders(providers)
+                    .build(),
+            RC_SIGN_IN);
+    ```
+
+- Home
+    - "GET" request to Firebase to retrieve user's saved chorests
+    ```java
+    db.collection("users")
+        .get()
+        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Log.d(TAG, document.getId() + " => " + document.getData());
+                    }
+                } else {
+                    Log.w(TAG, "Error getting documents.", task.getException());
+                }
+            }
+        });
+    ```
+    - "DELETE" to delete existing chorest
+    ```java
+    db.collection("userID").document("chorest")
+        .delete()
+        .addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, "DocumentSnapshot successfully deleted!");
+            }
+        })
+        .addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w(TAG, "Error deleting document", e);
+            }
+        });
+    ```
+
+- Chorest
+    - "POST" request to insert new chorest
+    ```java
+    db.collection("users").add({
+    first: "Ada",
+    last: "Lovelace",
+    born: 1815
+    })
+    .then((docRef) => {
+        console.log("Document written with ID: ", docRef.id);
+    })
+    .catch((error) => {
+        console.error("Error adding document: ", error);
+    });
+    ```
+    - "UPDATE" to edit existing chorest
+    - "DELETE" to delete existing chorest
+    - "GET" request to display saved chorest details    
+
+- Map
+    - "GET" request to Google SDK/API to show the maps
+    - "GET" request to receive user's saved chorests
+
+- Profile
+    - "GET" request to signout by calling Firebase Authentication`        
+    ```java
+    AuthUI.getInstance()
+           .signOut(this)
+           .addOnCompleteListener(new OnCompleteListener<Void>(){
+           public void onComplete(@NonNull Task<Void> task) {
+                // ...
+            }
+        });
+    ```
 - [OPTIONAL: List endpoints if using existing API such as Yelp]
+    - "GET" Firebase SDK
+    - "GET" Google Maps API 
+    - "GET" Maps SDK - displays the map in the app.
+    - "GET" Places API - query for locations to access route for chorests. 
