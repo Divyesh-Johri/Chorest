@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "320885889342",
+    "project_id": "chorest-630f6",
+    "storage_bucket": "chorest-630f6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:320885889342:android:879b0e75cad5f83933746f",
+        "android_client_info": {
+          "package_name": "com.example.chorest_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "320885889342-123k2lieb1qriajdmr884f91uq3l8cmj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSPKlN9oOZPLq4n_EpbVRFE-krqGgz6C4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "320885889342-123k2lieb1qriajdmr884f91uq3l8cmj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
