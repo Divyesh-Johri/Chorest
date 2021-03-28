@@ -13,15 +13,27 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
 
     public static final String TAG = "LoginActivity";
+
+    // Initialize Firebase authenticator and database
     private FirebaseAuth mAuth;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     TextView tvLogo;
     EditText etEmail;
@@ -69,7 +81,10 @@ public class LoginActivity extends AppCompatActivity {
         super.onStart();
         // Check if user is signed in (non-null)
         FirebaseUser currentUser = mAuth.getCurrentUser();
+
         if(currentUser != null){
+            Log.i(TAG, "EMAIL: " + currentUser.getEmail());
+            Log.i(TAG, "USER ID: " + currentUser.getUid());
             goToMain();
         }
     }
@@ -91,7 +106,14 @@ public class LoginActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            goToMain();
+
+                            // Update Firestore database with new user
+                            if (user != null) {
+                                Log.i(TAG, "EMAIL: " + user.getEmail());
+                                Log.i(TAG, "USER ID: " + user.getUid());
+                                goToMain();
+                            }
+
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
@@ -113,9 +135,14 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(LoginActivity.this, "Signed up successfully! Now signed in... ", Toast.LENGTH_SHORT).show();
 
                         // Update Firestore database with new user
+                        if (user != null) {
+                            addUser(user);
+                            Log.i(TAG, "EMAIL: " + user.getEmail());
+                            Log.i(TAG, "USER ID: " + user.getUid());
 
+                            goToMain();
+                        }
 
-                        goToMain();
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "createUserWithEmail:failure", task.getException());
@@ -124,5 +151,52 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 }
             });
+    }
+
+    private void addUser(FirebaseUser user) {
+
+        String uID = user.getUid();
+
+        Map<String, Object> userFields = new HashMap<>();
+        userFields.put("email", user.getEmail());
+
+        // Setting user document
+        db.collection("users").document(uID)
+                .set(userFields)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error writing document", e);
+                        Toast.makeText(LoginActivity.this, "Unable to add user to database. Try signing up again.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        Map<String, Object> routeFields = new HashMap<>();
+        routeFields.put("name", "dummy");
+        routeFields.put("timestamp", FieldValue.serverTimestamp());
+
+
+        // Setting user's chorest collection
+        db.collection("users/" + uID + "/chorests" ).document(uID + "ROUTE")
+                .set(routeFields)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error writing document", e);
+                        Toast.makeText(LoginActivity.this, "Unable to add user chorests to database. Try signing up again.", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 }
