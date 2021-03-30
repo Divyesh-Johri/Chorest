@@ -208,7 +208,10 @@ public class LoginActivity extends AppCompatActivity {
                             Log.i(TAG, "Current user ID: " + user.getUid());
 
                             // If user profile exists, sign in
+
+                            // Possible error, doesn't wait for API call to finish (not Async)
                             userExists(user);
+
                             if(userExistsError == 1){
                                 Log.w(TAG, "signInWithCredential: FAILURE, get request for user failed");
                                 Toast.makeText(LoginActivity.this, "Couldn't sign in using Google", Toast.LENGTH_SHORT).show();
@@ -272,7 +275,9 @@ public class LoginActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
+                    Log.i(TAG, "Document exists = " + document.exists());
                     bUserExists = document.exists();
+                    Log.i(TAG, "bUserExists = " + bUserExists);
                     userExistsError = 0;
                 } else {
                     Log.d(TAG, "get failed with ", task.getException());
