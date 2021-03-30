@@ -11,7 +11,7 @@
         android:id="@+id/btchangepage"
         android:layout_width="171dp"
         android:layout_height="58dp"
-        android:text="Change Page"
+        android:text="Change Password"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:layout_editor_absoluteY="300dp" />

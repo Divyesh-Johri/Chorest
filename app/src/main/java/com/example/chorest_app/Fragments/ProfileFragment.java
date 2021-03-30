@@ -69,32 +69,35 @@ public class ProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_profile2, container, false);
     }
-    FirebaseAuth.getInstance().
+    //signout method
+    //onviewcreated
+    FirebaseAuth.getInstance().signOut();
 
-    signOut();
-
-    private void goToMain() {
-        Intent i = new Intent(this, MainActivity.class);
+    private void goToLogin() {
+        Intent i = new Intent(this, LoginActivity.class);
         startActivity(i);
         finish();
     }
-    if(user !=null)
+    FirebaseUser currentUser = mAuth.getCurrentUser();
+    if(currentUser !=null)
 
     {
-        Log.w(TAG, "Issue with login", e);
+        Log.w(TAG, "Issue with signout", e);
         Toast.makeText(ProfileFragment.this, "Issue with signout", Toast.LENGTH_SHORT).show();
         return;
     }
     else;
 
     {
+
         Log.d(TAG, "Successfully signed out");
         Toast.makeText(ProfileFragment.this, "Successfully signed out", Toast.LENGTH_SHORT).show();
+        private void goToLogin() {
+        Intent i = new Intent(this, LoginActivity.class);
+        startActivity(i);
+        finish();
         return;
 
-        // TODO: navigate to the main activity if the user has signed in properly
-        goMainActivity();
-        Toast.makeText(LoginActivity.this, "Success!", Toast.LENGTH_SHORT).show();
     }
 }
 
@@ -103,3 +106,5 @@ public class ProfileFragment extends Fragment {
 //change page has option to go to any other screen
 
 //signout
+
+//user.getemail()
