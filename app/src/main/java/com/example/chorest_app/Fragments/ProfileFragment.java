@@ -1,14 +1,20 @@
 package com.example.chorest_app.Fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.example.chorest_app.MainActivity;
 import com.example.chorest_app.R;
+
+import static com.example.chorest_app.LoginActivity.TAG;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -63,4 +69,37 @@ public class ProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_profile2, container, false);
     }
+    FirebaseAuth.getInstance().
+
+    signOut();
+
+    private void goToMain() {
+        Intent i = new Intent(this, MainActivity.class);
+        startActivity(i);
+        finish();
+    }
+    if(user !=null)
+
+    {
+        Log.w(TAG, "Issue with login", e);
+        Toast.makeText(ProfileFragment.this, "Issue with signout", Toast.LENGTH_SHORT).show();
+        return;
+    }
+    else;
+
+    {
+        Log.d(TAG, "Successfully signed out");
+        Toast.makeText(ProfileFragment.this, "Successfully signed out", Toast.LENGTH_SHORT).show();
+        return;
+
+        // TODO: navigate to the main activity if the user has signed in properly
+        goMainActivity();
+        Toast.makeText(LoginActivity.this, "Success!", Toast.LENGTH_SHORT).show();
+    }
 }
+
+
+
+//change page has option to go to any other screen
+
+//signout
