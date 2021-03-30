@@ -30,6 +30,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -40,17 +41,13 @@ public class LoginActivity extends AppCompatActivity {
 
     public static final String TAG = "LoginActivity";
     private static final int RC_SIGN_IN = 20;
+    // For userExists function
+    public boolean bUserExists;
+    public int userExistsError;         // 0 if no error, 1 if error
 
     // Initialize Firebase authenticator and database
     private FirebaseAuth mAuth;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-    // Configure Google Sign In
-    GoogleSignInOptions gso = new GoogleSignInOptions
-            .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build();
 
     TextView tvLogo;
     EditText etEmail;
@@ -160,6 +157,14 @@ public class LoginActivity extends AppCompatActivity {
 
     // Use Google Authenticator to sign in
     private void signInWithGoogle() {
+        Log.i(TAG, "Now launching Google sign in activity");
+
+        // Configure Google Sign In
+        GoogleSignInOptions gso = new GoogleSignInOptions
+                .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
 
         GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(this, gso);
 
@@ -174,6 +179,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
+            // Get parceable of data from GoogleSignIn
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 // Google Sign In was successful, authenticate with Firebase
@@ -181,7 +187,7 @@ public class LoginActivity extends AppCompatActivity {
                 Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
                 firebaseAuthWithGoogle(account.getIdToken());
             } catch (ApiException e) {
-                // Google Sign In failed, update UI appropriately
+                // Google Sign In failed
                 Log.w(TAG, "Google sign in failed", e);
                 Toast.makeText(LoginActivity.this, "Couldn't sign in using Google", Toast.LENGTH_SHORT).show();
             }
@@ -196,22 +202,38 @@ public class LoginActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithCredential:success");
+                            Log.d(TAG, "signInWithCredential: SUCCESS");
+
                             FirebaseUser user = mAuth.getCurrentUser();
-                            // If user profile exists, sign them in
-                            // signIn();
-                            // If user profile doesn't exist, sign them up
-                            // signUp();
+                            Log.i(TAG, "Current user ID: " + user.getUid());
+
+                            // If user profile exists, sign in
+                            userExists(user);
+                            if(userExistsError == 1){
+                                Log.w(TAG, "signInWithCredential: FAILURE, get request for user failed");
+                                Toast.makeText(LoginActivity.this, "Couldn't sign in using Google", Toast.LENGTH_SHORT).show();
+                            }
+                            else if(bUserExists && userExistsError == 0){
+                                Log.i(TAG, "Signing in user: " + user.getUid());
+                                goToMain();
+                            }
+                            else{
+                                // If user profile doesn't exist, sign them up
+                                Log.i(TAG, "Signing up user and adding to database: " + user.getUid());
+                                addUser(user);
+                                goToMain();
+                            }
+
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
-
+                            Toast.makeText(LoginActivity.this, "Couldn't sign in using Google", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
     }
 
-
+    // Sign up using given email and password
     private void signUp(String email, String password) {
         mAuth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -242,6 +264,26 @@ public class LoginActivity extends AppCompatActivity {
             });
     }
 
+    // TRUE if user is in database, FALSE if they are not
+    private void userExists(FirebaseUser user) {
+        DocumentReference docRef = db.collection("users").document(user.getUid());
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    bUserExists = document.exists();
+                    userExistsError = 0;
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                    Toast.makeText(LoginActivity.this, "Failed to validate user, try signing in again", Toast.LENGTH_SHORT).show();
+                    userExistsError = 1;
+                }
+            }
+        });
+    }
+
+    // Add specified user to the database of users
     private void addUser(FirebaseUser user) {
 
         String uID = user.getUid();
