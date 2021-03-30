@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -114,11 +115,11 @@ public class LoginActivity extends AppCompatActivity {
         // Check if user is signed in (non-null)
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
-        if(currentUser != null){
-            Log.i(TAG, "EMAIL: " + currentUser.getEmail());
-            Log.i(TAG, "USER ID: " + currentUser.getUid());
-            goToMain();
-        }
+//        if(currentUser != null){
+//            Log.i(TAG, "EMAIL: " + currentUser.getEmail());
+//            Log.i(TAG, "USER ID: " + currentUser.getUid());
+//            goToMain();
+//        }
     }
 
     // Navigate to MainActivity
@@ -208,24 +209,7 @@ public class LoginActivity extends AppCompatActivity {
                             Log.i(TAG, "Current user ID: " + user.getUid());
 
                             // If user profile exists, sign in
-
-                            // Possible error, doesn't wait for API call to finish (not Async)
-                            userExists(user);
-
-                            if(userExistsError == 1){
-                                Log.w(TAG, "signInWithCredential: FAILURE, get request for user failed");
-                                Toast.makeText(LoginActivity.this, "Couldn't sign in using Google", Toast.LENGTH_SHORT).show();
-                            }
-                            else if(bUserExists && userExistsError == 0){
-                                Log.i(TAG, "Signing in user: " + user.getUid());
-                                goToMain();
-                            }
-                            else{
-                                // If user profile doesn't exist, sign them up
-                                Log.i(TAG, "Signing up user and adding to database: " + user.getUid());
-                                addUser(user);
-                                goToMain();
-                            }
+                            signInIfUserExists(user);
 
                         } else {
                             // If sign in fails, display a message to the user.
@@ -234,6 +218,35 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+    // Decide to sign in or sign up authenticated user
+    private void signInIfUserExists(FirebaseUser user) {
+        DocumentReference docRef = db.collection("users").document(user.getUid());
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    Log.i(TAG, "Document exists = " + document.exists());
+
+                    if(document.exists()){
+                        // If user's profile exists, just go to home page
+                        Log.i(TAG, "Signing in user: " + user.getUid());
+                    }
+                    else{
+                        // If user profile doesn't exist, sign them up (add them to database)
+                        Log.i(TAG, "Signing up user and adding to database: " + user.getUid());
+                        addUser(user);
+                    }
+
+                    goToMain();
+
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                    Toast.makeText(LoginActivity.this, "Failed to validate user, try signing in again", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     // Sign up using given email and password
@@ -250,6 +263,7 @@ public class LoginActivity extends AppCompatActivity {
 
                         // Update Firestore database with new user
                         if (user != null) {
+
                             addUser(user);
                             Log.i(TAG, "EMAIL: " + user.getEmail());
                             Log.i(TAG, "USER ID: " + user.getUid());
@@ -265,27 +279,6 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 }
             });
-    }
-
-    // TRUE if user is in database, FALSE if they are not
-    private void userExists(FirebaseUser user) {
-        DocumentReference docRef = db.collection("users").document(user.getUid());
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    Log.i(TAG, "Document exists = " + document.exists());
-                    bUserExists = document.exists();
-                    Log.i(TAG, "bUserExists = " + bUserExists);
-                    userExistsError = 0;
-                } else {
-                    Log.d(TAG, "get failed with ", task.getException());
-                    Toast.makeText(LoginActivity.this, "Failed to validate user, try signing in again", Toast.LENGTH_SHORT).show();
-                    userExistsError = 1;
-                }
-            }
-        });
     }
 
     // Add specified user to the database of users
