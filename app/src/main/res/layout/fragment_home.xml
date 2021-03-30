@@ -45,6 +45,7 @@
             android:id="@+id/rvSavedChorests"
             android:layout_width="match_parent"
             android:layout_height="480dp"
+            android:padding="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             tools:layout_editor_absoluteX="0dp" />
 

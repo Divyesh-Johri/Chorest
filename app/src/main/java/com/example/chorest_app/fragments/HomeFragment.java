@@ -2,6 +2,8 @@ package com.example.chorest_app.fragments;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -10,7 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.example.chorest_app.ChorestsModel;
 import com.example.chorest_app.R;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 
 import java.util.List;
 
@@ -29,6 +35,10 @@ public class HomeFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private FirebaseFirestore firebaseFirestore;
+    private RecyclerView rvSavedChorests;
+
 
 
     public HomeFragment() {
@@ -53,9 +63,8 @@ public class HomeFragment extends Fragment {
         return fragment;
     }
 
-    List<String> items;
-    Button btHomeAddChorest;
-    RecyclerView rvSavedChorests;
+    //List<String> items;
+    //Button btHomeAddChorest;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,7 +74,6 @@ public class HomeFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        //btHomeAddChorest = View.findViewById(R.id.btHomeAddChorest);
     }
 
     @Override
@@ -73,5 +81,20 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        //firebaseFirestore = FirebaseFirestore.getInstance();
+        //rvSavedChorests = view.findViewById(R.id.rvSavedChorests);
+
+        // Query to get data from Firestore
+       // Query query = firebaseFirestore.collection("chorests");
+        // can pull in by certain order by ".orderBy(...)
+
+        //RecyclerOptions
+        //FirestoreRecyclerOptions<ChorestsModel> options = new FirestoreRecyclerOptions<>().setQuery(query);
     }
 }
