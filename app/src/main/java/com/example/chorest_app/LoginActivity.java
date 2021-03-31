@@ -129,7 +129,7 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
-    // Sign in with email/pass using Google Auth
+    // Sign in with email/pass using Firebase Auth
     private void signIn(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
