@@ -42,6 +42,8 @@ Chorest is an app that allows users to find the shortest route between locations
 * User can utilize speech-to-text for chores
 * User can share chorests (through text or email) 
 
+Gif Link: https://github.com/Divyesh-Johri/Chorest/blob/main/Chorest3.gif
+
 ### 2. Screen Archetypes
 
 * Login
