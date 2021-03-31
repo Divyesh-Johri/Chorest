@@ -115,11 +115,11 @@ public class LoginActivity extends AppCompatActivity {
         // Check if user is signed in (non-null)
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
-//        if(currentUser != null){
-//            Log.i(TAG, "EMAIL: " + currentUser.getEmail());
-//            Log.i(TAG, "USER ID: " + currentUser.getUid());
-//            goToMain();
-//        }
+        if(currentUser != null){
+            Log.i(TAG, "EMAIL: " + currentUser.getEmail());
+            Log.i(TAG, "USER ID: " + currentUser.getUid());
+            goToMain();
+        }
     }
 
     // Navigate to MainActivity
