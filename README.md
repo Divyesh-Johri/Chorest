@@ -24,9 +24,10 @@ Chorest is an app that allows users to find the shortest route between locations
 
 **Required Must-have Stories**
 
-* User can login to app and persist (Login page)
-* User can view their chorests (Home page)
-* User can view profile and logout (Profile page)
+[x] User can login to app and persist (Login page)
+[x] User can view their chorests (Home page)
+[x] User can view profile and logout (Profile page)
+[x] User can view maps (Maps page)
 * User can add and edit and delete a chorest (Home + Chorest Page)
 * User can navigate to maps page with selected route (Chorest page)
 * User can view new unoptimal routes and go back to old ones (Add chorest page)
