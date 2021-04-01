@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.example.chorest_app.Fragments.AddChorestFragment;
 import com.example.chorest_app.Fragments.HomeFragment;
 import com.example.chorest_app.Fragments.MapFragment;
 import com.example.chorest_app.Fragments.ProfileFragment;
@@ -38,11 +37,6 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.action_profile:
                         Toast.makeText(MainActivity.this, "Profile Button.", Toast.LENGTH_SHORT).show();
                         fragment = new ProfileFragment();
-                        break;
-
-                    case R.id.action_addChorest:
-                        Toast.makeText(MainActivity.this, "Add Chorest Button.", Toast.LENGTH_SHORT).show();
-                        fragment = new AddChorestFragment();
                         break;
 
                     case R.id.action_map:

@@ -13,11 +13,6 @@
         android:title="Home"
         app:showAsAction="always" />
     <item
-        android:id="@+id/action_addChorest"
-        android:icon="@drawable/ic_baseline_add_to_photos_24"
-        android:title="Add Chorest"
-        app:showAsAction="always" />
-    <item
         android:id="@+id/action_map"
         android:icon="@drawable/ic_baseline_public_24"
         android:title="Map"

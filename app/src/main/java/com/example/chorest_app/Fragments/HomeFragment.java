@@ -1,5 +1,6 @@
 package com.example.chorest_app.Fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -7,14 +8,19 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.example.chorest_app.AddChorestActivity;
 import com.example.chorest_app.ChorestsModel;
+import com.example.chorest_app.LoginActivity;
 import com.example.chorest_app.R;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
@@ -31,6 +37,7 @@ public class HomeFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String TAG = "HomeFragment";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -38,6 +45,7 @@ public class HomeFragment extends Fragment {
 
     private FirebaseFirestore firebaseFirestore;
     private RecyclerView rvSavedChorests;
+    private FloatingActionButton fabAddChorest;
 
 
 
@@ -63,8 +71,6 @@ public class HomeFragment extends Fragment {
         return fragment;
     }
 
-    //List<String> items;
-    //Button btHomeAddChorest;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,11 +89,25 @@ public class HomeFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
+
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        //firebaseFirestore = FirebaseFirestore.getInstance();
+        fabAddChorest =  view.findViewById(R.id.fabAddChorest);
+
+        fabAddChorest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToAddChorest();
+            }
+
+
+        });
+
+
+                //firebaseFirestore = FirebaseFirestore.getInstance();
         //rvSavedChorests = view.findViewById(R.id.rvSavedChorests);
 
         // Query to get data from Firestore
@@ -96,5 +116,23 @@ public class HomeFragment extends Fragment {
 
         //RecyclerOptions
         //FirestoreRecyclerOptions<ChorestsModel> options = new FirestoreRecyclerOptions<>().setQuery(query);
+    }
+
+
+    private void goToAddChorest() {
+
+        try {
+            Log.d(TAG, "Successfully switched to Add Chorest page.");
+            Toast.makeText(getActivity(), "Add Chorest Page", Toast.LENGTH_SHORT).show();
+
+            Intent i = new Intent(getActivity(), AddChorestActivity.class);
+            startActivity(i);
+            getActivity().finish();
+
+        } catch (Exception e) {
+            Log.w(TAG, "Issue with switch to Add Chorest Page", e);
+            Toast.makeText(getActivity(), "Failed to go to Add Chorest", Toast.LENGTH_SHORT).show();
+            return;
+        }
     }
 }
