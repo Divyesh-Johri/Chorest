@@ -25,81 +25,66 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <RadioGroup
-            android:id="@+id/rgLocation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-        </RadioGroup>
-
-        <RadioButton
-            android:id="@+id/rbCurrentLocation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:checked="true"
-            android:text="Current Location"
-            app:layout_constraintEnd_toStartOf="@+id/rbChooseLocation"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvLocationLabel"
-            android:onClick= "onRadioButtonClicked"/>
-
-        <RadioButton
-            android:id="@+id/rbChooseLocation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Select Address"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/rbCurrentLocation"
-            app:layout_constraintTop_toBottomOf="@+id/tvLocationLabel"
-            android:onClick= "onRadioButtonClicked"/>
-
         <TextView
             android:id="@+id/tvTypeAddress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="76dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginStart="72dp"
+            android:layout_marginTop="20dp"
             android:editable="true"
             android:text="TextView"
             android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rbCurrentLocation"
+            app:layout_constraintTop_toBottomOf="@+id/rgLocation"
             tools:text="Street Address" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvCalculatedRoutes"
-            android:layout_width="324dp"
-            android:layout_height="167dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvAddLocations"
             android:layout_width="324dp"
             android:layout_height="167dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="24dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_bias="0.494"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+        <Button
+            android:id="@+id/btCalculateMap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="44dp"
+            android:text="Generate Map"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.496"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rvCalculatedRoutes" />
+
+        <Button
+            android:id="@+id/btChorestList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Submit"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.496"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rvAddLocations" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvCalculatedRoutes"
+            android:layout_width="324dp"
+            android:layout_height="167dp"
+            android:layout_marginTop="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.494"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
         <TextView
             android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="36dp"
+            android:layout_marginStart="32dp"
             android:layout_marginTop="32dp"
             android:text="Add another location:"
             app:layout_constraintStart_toStartOf="parent"
@@ -109,33 +94,50 @@
             android:id="@+id/textView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="36dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="20dp"
             android:text="Calculated Routes:"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btChorestList" />
 
-        <Button
-            android:id="@+id/btChorestList"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="7dp"
-            android:text="Submit"
+        <RadioGroup
+            android:id="@+id/rgLocation"
+            android:layout_width="335dp"
+            android:layout_height="60dp"
+            android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rvAddLocations" />
+            app:layout_constraintTop_toBottomOf="@+id/tvLocationLabel">
 
-        <Button
-            android:id="@+id/btCalculateMap"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Generate Map"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rvCalculatedRoutes" />
+            <RadioButton
+                android:id="@+id/rbCurrentLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginRight="16dp"
+                android:checked="true"
+                android:onClick="onRadioButtonClicked"
+                android:text="Current Location"
+                app:layout_constraintEnd_toStartOf="@+id/rbChooseLocation"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvLocationLabel" />
+
+            <RadioButton
+                android:id="@+id/rbChooseLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:baselineAligned="false"
+                android:onClick="onRadioButtonClicked"
+                android:text="Select Address"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/rbCurrentLocation"
+                app:layout_constraintTop_toBottomOf="@+id/tvLocationLabel" />
+
+        </RadioGroup>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
