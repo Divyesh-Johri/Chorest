@@ -14,91 +14,90 @@
         tools:context=".AddChorestActivity">
 
 
+        <Button
+            android:id="@+id/btAddLocations2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="20dp"
+            android:text="Add"
+            app:layout_constraintStart_toEndOf="@+id/etTypeAddress"
+            app:layout_constraintTop_toBottomOf="@+id/rgLocation" />
+
         <TextView
             android:id="@+id/tvLocationLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="18dp"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="32dp"
             android:text="Choose your starting location:"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/tvTypeAddress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="72dp"
-            android:layout_marginTop="20dp"
-            android:editable="true"
-            android:text="TextView"
-            android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rgLocation"
-            tools:text="Street Address" />
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvAddLocations"
             android:layout_width="324dp"
             android:layout_height="167dp"
-            android:layout_marginTop="24dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.494"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView3" />
-
-        <Button
-            android:id="@+id/btCalculateMap"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="44dp"
-            android:text="Generate Map"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.496"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rvCalculatedRoutes" />
-
-        <Button
-            android:id="@+id/btChorestList"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Submit"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.496"
+            app:layout_constraintHorizontal_bias="0.367"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rvAddLocations" />
+            app:layout_constraintTop_toBottomOf="@+id/etAddLocations" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvCalculatedRoutes"
             android:layout_width="324dp"
             android:layout_height="167dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="24dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.494"
+            app:layout_constraintHorizontal_bias="0.367"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView4" />
-
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="32dp"
-            android:text="Add another location:"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvTypeAddress" />
 
         <TextView
             android:id="@+id/textView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="26dp"
             android:text="Calculated Routes:"
+            android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btChorestList" />
+            app:layout_constraintTop_toBottomOf="@+id/btSubmitList" />
+
+        <Button
+            android:id="@+id/btSubmitList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:text="Submit"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.462"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rvAddLocations" />
+
+        <Button
+            android:id="@+id/btCalculateMap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="Generate Map"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.454"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rvCalculatedRoutes" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="40dp"
+            android:text="Add a destinations:"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etTypeAddress" />
 
         <RadioGroup
             android:id="@+id/rgLocation"
@@ -138,6 +137,42 @@
                 app:layout_constraintTop_toBottomOf="@+id/tvLocationLabel" />
 
         </RadioGroup>
+
+        <EditText
+            android:id="@+id/etAddLocations"
+            android:layout_width="229dp"
+            android:layout_height="42dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="8dp"
+            android:ems="10"
+            android:inputType="textPostalAddress"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView3"
+            tools:text="Street Address" />
+
+        <Button
+            android:id="@+id/btAddLocations"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Add"
+            app:layout_constraintStart_toEndOf="@+id/etAddLocations"
+            app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+        <EditText
+            android:id="@+id/etTypeAddress"
+            android:layout_width="230dp"
+            android:layout_height="36dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="20dp"
+            android:ems="10"
+            android:inputType="textPostalAddress"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rgLocation"
+            tools:text="Street Address" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -49,9 +49,10 @@
             android:text="Your Chorests"
             android:textSize="18sp"
             app:layout_constraintBottom_toTopOf="@+id/rvSavedChorests"
-            app:layout_constraintTop_toBottomOf="@+id/tvHomeLabel"
-            tools:layout_editor_absoluteX="0dp" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvHomeLabel" />
 
+        <!--For the Floating Action Button-->
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:id="@+id/main_content"
             android:layout_width="match_parent"
