@@ -1,4 +1,4 @@
-package com.example.chorest_app.fragments;
+package com.example.chorest_app.Fragments;
 
 import android.content.Intent;
 import android.os.Bundle;

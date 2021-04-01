@@ -9,10 +9,10 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.example.chorest_app.fragments.AddChorestFragment;
-import com.example.chorest_app.fragments.HomeFragment;
-import com.example.chorest_app.fragments.MapFragment;
-import com.example.chorest_app.fragments.ProfileFragment;
+import com.example.chorest_app.Fragments.AddChorestFragment;
+import com.example.chorest_app.Fragments.HomeFragment;
+import com.example.chorest_app.Fragments.MapFragment;
+import com.example.chorest_app.Fragments.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {

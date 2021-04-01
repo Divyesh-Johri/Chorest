@@ -1,31 +1,21 @@
-package com.example.chorest_app.fragments;
+package com.example.chorest_app.Fragments;
 
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
-import com.example.chorest_app.ChorestsModel;
 import com.example.chorest_app.R;
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-
-import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link HomeFragment#newInstance} factory method to
+ * Use the {@link AddChorestFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HomeFragment extends Fragment {
+public class AddChorestFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -36,12 +26,7 @@ public class HomeFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private FirebaseFirestore firebaseFirestore;
-    private RecyclerView rvSavedChorests;
-
-
-
-    public HomeFragment() {
+    public AddChorestFragment() {
         // Required empty public constructor
     }
 
@@ -51,20 +36,17 @@ public class HomeFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment HomeFragment.
+     * @return A new instance of fragment AddChorest.
      */
     // TODO: Rename and change types and number of parameters
-    public static HomeFragment newInstance(String param1, String param2) {
-        HomeFragment fragment = new HomeFragment();
+    public static AddChorestFragment newInstance(String param1, String param2) {
+        AddChorestFragment fragment = new AddChorestFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
-
-    //List<String> items;
-    //Button btHomeAddChorest;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,28 +55,12 @@ public class HomeFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        //firebaseFirestore = FirebaseFirestore.getInstance();
-        //rvSavedChorests = view.findViewById(R.id.rvSavedChorests);
-
-        // Query to get data from Firestore
-       // Query query = firebaseFirestore.collection("chorests");
-        // can pull in by certain order by ".orderBy(...)
-
-        //RecyclerOptions
-        //FirestoreRecyclerOptions<ChorestsModel> options = new FirestoreRecyclerOptions<>().setQuery(query);
+        return inflater.inflate(R.layout.fragment_add_chorest, container, false);
     }
 }

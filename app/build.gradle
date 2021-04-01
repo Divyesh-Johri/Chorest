@@ -51,4 +51,7 @@ dependencies {
     // FirebaseUI for Cloud Firestore
     implementation 'com.firebaseui:firebase-ui-firestore:7.1.1'
 
+    // Floating Action Button
+    implementation 'com.google.android.material:material:1.1.0'
+
 }
