@@ -3,18 +3,22 @@ package com.example.chorest_app.Fragments;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.chorest_app.LoginActivity;
 import com.example.chorest_app.MainActivity;
 import com.example.chorest_app.R;
-
-import static com.example.chorest_app.LoginActivity.TAG;
+import com.google.firebase.auth.FirebaseAuth;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -27,10 +31,15 @@ public class ProfileFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String TAG = "ProfileFragment";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private FirebaseAuth mAuth;
+    private Button btLogout;
+
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -67,44 +76,57 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile2, container, false);
+        return inflater.inflate(R.layout.fragment_profile, container, false);
     }
     //signout method
     //onviewcreated
-    FirebaseAuth.getInstance().signOut();
+
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        btLogout = view.findViewById(R.id.btLogout);
+        // Initialize Firebase authentication
+        mAuth = FirebaseAuth.getInstance();
+
+        btLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                signOut();
+            }
+        });
+    }
+
+    private void signOut() {
+        mAuth.signOut();
+
+        goToLogin();
+    }
 
     private void goToLogin() {
-        Intent i = new Intent(this, LoginActivity.class);
-        startActivity(i);
-        finish();
-    }
-    FirebaseUser currentUser = mAuth.getCurrentUser();
-    if(currentUser !=null)
 
-    {
-        Log.w(TAG, "Issue with signout", e);
-        Toast.makeText(ProfileFragment.this, "Issue with signout", Toast.LENGTH_SHORT).show();
-        return;
-    }
-    else;
 
-    {
 
-        Log.d(TAG, "Successfully signed out");
-        Toast.makeText(ProfileFragment.this, "Successfully signed out", Toast.LENGTH_SHORT).show();
-        private void goToLogin() {
-        Intent i = new Intent(this, LoginActivity.class);
-        startActivity(i);
-        finish();
-        return;
+        try {
+            Log.d(TAG, "Successfully signed out");
+            Toast.makeText(getActivity(), "Successfully signed out", Toast.LENGTH_SHORT).show();
+
+            Intent i = new Intent(getActivity(), LoginActivity.class);
+            startActivity(i);
+            getActivity().finish();
+
+        } catch (Exception e) {
+            Log.w(TAG, "Issue with signout", e);
+            Toast.makeText(getActivity(), "Issue with signout", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
 
     }
 }
 
 
 
-//change page has option to go to any other screen
-
-//signout
 
 //user.getemail()
