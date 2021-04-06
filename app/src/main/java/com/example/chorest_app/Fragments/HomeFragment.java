@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.example.chorest_app.AddChorestActivity;
 import com.example.chorest_app.ChorestsModel;
+//import com.example.chorest_app.ItemsAdapter;
 import com.example.chorest_app.LoginActivity;
 import com.example.chorest_app.R;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -46,6 +47,8 @@ public class HomeFragment extends Fragment {
     private FirebaseFirestore firebaseFirestore;
     private RecyclerView rvSavedChorests;
     private FloatingActionButton fabAddChorest;
+
+    //ItemsAdapter itemsAdapter;
 
 
 
@@ -96,6 +99,7 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         fabAddChorest =  view.findViewById(R.id.fabAddChorest);
+        rvSavedChorests = view.findViewById(R.id.rvSavedChorests);
 
         fabAddChorest.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,6 +109,8 @@ public class HomeFragment extends Fragment {
 
 
         });
+
+
 
 
                 //firebaseFirestore = FirebaseFirestore.getInstance();

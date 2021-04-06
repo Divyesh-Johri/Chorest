@@ -65,7 +65,7 @@ public class AddChorestActivity extends AppCompatActivity {
     }
 
     private void goToMap(){
-        Intent i = new Intent(this, MapFragment.class);
+        Intent i = new Intent(this, MainActivity.class);
         startActivity(i);
         finish();
     }
