@@ -1,6 +1,9 @@
 package com.example.chorest_app;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,6 +21,8 @@ public class AddChorestActivity extends AppCompatActivity {
     private RadioButton rbCurrentLocation;
     private RadioButton rbChooseLocation;
     private Button btCalculateMap;
+    private static final int  RC_TO_MAP  = 23;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +70,33 @@ public class AddChorestActivity extends AppCompatActivity {
     }
 
     private void goToMap(){
-        Intent i = new Intent(this, MainActivity.class);
+        /*Intent i = new Intent(this, MainActivity.class);
+
+        i.putExtra("keyBoolean", true);
         startActivity(i);
-        finish();
+        finish();*/
+
+        Intent i = getIntent();
+        startActivityForResult(i,RC_TO_MAP);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RC_TO_MAP){
+
+            FragmentManager fm = getSupportFragmentManager();
+            MapFragment chorestMap = new MapFragment();
+            fm.beginTransaction().replace(R.id.addChorestContainer, chorestMap).commit();
+
+
+            Toast.makeText(AddChorestActivity.this, "Going to Map", Toast.LENGTH_SHORT).show();
+
+            //finish();
+        }
+        else{
+            Toast.makeText(AddChorestActivity.this, "Error going to Map", Toast.LENGTH_SHORT).show();
+        }
     }
 }

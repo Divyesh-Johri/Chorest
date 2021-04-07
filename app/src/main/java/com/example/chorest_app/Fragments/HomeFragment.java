@@ -129,7 +129,7 @@ public class HomeFragment extends Fragment {
 
         try {
             Log.d(TAG, "Successfully switched to Add Chorest page.");
-            Toast.makeText(getActivity(), "Add Chorest Page", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getActivity(), "Add Chorest Page", Toast.LENGTH_SHORT).show();
 
             Intent i = new Intent(getActivity(), AddChorestActivity.class);
             startActivity(i);
