@@ -2,4 +2,6 @@
     <string name="app_name">Chorest_App</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- Places API Key -->
+    <string name="places_api_key">AIzaSyCamnZZ346wOQagttXBBOlIMBViJZs1rAI</string>
 </resources>
