@@ -19,6 +19,10 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,6 +62,8 @@ public class Chorest {
         this.id = id;
         findChorest();
     }
+
+    // Constructor for creating new Chorest
 
     // Find indicated chorest in Firestore and fill out properties
     private void findChorest() {
@@ -136,7 +142,14 @@ public class Chorest {
                 @Override
                 public void onSuccess(int i, Headers headers, JSON json) {
                     Log.d(TAG, "retrievePlaces - Addresses received: " + json.jsonObject.toString());
-                    // Add json addresses in places as a String[]
+                    // Add json address in places as a String[] of name, address, place_id
+                    try {
+                        JSONObject results = json.jsonObject.getJSONArray("results").getJSONObject(0);
+                        String[] address = {results.getString("name"), results.getString("formatted_address"), results.getString("place_id")};
+                        places.add(address);
+                    } catch (JSONException e) {
+                        Log.e(TAG, "retrievePlaces - JSON Parsing error: ", e);
+                    }
                 }
 
                 @Override
@@ -146,11 +159,79 @@ public class Chorest {
             });
         }
 
+        if(places.isEmpty()){
+            return null;
+        }
         return places;
     }
-    // Find shortest distance between 2 locations
+
+    // Find shortest distance between 2 locations in meters
+    private Integer findDistance(String place_id_origin, String place_id_dest){
+        // Return value
+        ArrayList<Integer> returnDistance = new ArrayList<>();
+        // Set up HTTP call
+        String httpAddress = "https://maps.googleapis.com/maps/api/distancematrix/json?";
+        RequestParams params = new RequestParams();
+        params.put("origins", "place_id:" + place_id_origin);
+        params.put("destinations", "place_id:" + place_id_dest);
+        params.put("key", R.string.places_api_key);
+
+        httpClient.get(httpAddress, params, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int i, Headers headers, JSON json) {
+                Log.d(TAG, "findDistance - Distance received: " + json.jsonObject.toString());
+                try {
+                    String distanceString = json.jsonObject.getJSONArray("rows").getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("distance").getString("text");
+
+                    // Format distance string and return an integer in integer meters
+                    char[] chars = distanceString.toCharArray();
+                    char[] numberChars = new char[chars.length];
+                    for(int n = 0; n < chars.length; n++){
+                        if(Character.isDigit(chars[n])){
+                            numberChars[n] = chars[n];
+                        }
+                    }
+                    int distance = Integer.parseInt(String.valueOf(numberChars));
+                    // Check if it's in kilometers
+                    if(distanceString.contains("km")){
+                        distance *= 1000;
+                    }
+
+                    returnDistance.add(distance);
+
+                } catch (JSONException e) {
+                    Log.e(TAG, "findDistance - JSON Parsing error: ", e);
+                }
+            }
+
+            @Override
+            public void onFailure(int i, Headers headers, String s, Throwable throwable) {
+                Log.e(TAG, "findDistance - Failed to retrieve distances: ", throwable);
+            }
+        });
+
+        if(returnDistance.isEmpty()){
+            return null;
+        }
+        return returnDistance.get(0);
+    }
+
     // Create graph with addresses
+    private void createGraph(ArrayList<String[]> places){
+        // Dictionary java
+        for(String[] location1 : places){
+            Map<String[], Integer> content = new HashMap<>();
+            for(String[] location2 : places){
+                if(location1 != location2){
+                    content.put(location2, findDistance(location1[2], location2[2]));
+                }
+            }
+        }
+    }
+
     // Primm's algorithm
+
+
     // Calculate shortest route action method
 
 
