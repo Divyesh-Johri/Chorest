@@ -46,6 +46,10 @@ Chorest is an app that allows users to find the shortest route between locations
 <img src = "https://github.com/Divyesh-Johri/Chorest/blob/main/Chorest3.gif" width=250><br>
 Gif Link: https://github.com/Divyesh-Johri/Chorest/blob/main/Chorest3.gif
 
+
+<img src = "https://github.com/Divyesh-Johri/Chorest/blob/main/Chorest4.gif" width=250><br>
+Gif Link: https://github.com/Divyesh-Johri/Chorest/blob/main/Chorest4.gif
+
 ### 2. Screen Archetypes
 
 * Login
