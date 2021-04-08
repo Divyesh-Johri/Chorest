@@ -1,5 +1,6 @@
 package com.example.chorest_app;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -7,22 +8,36 @@ import androidx.fragment.app.FragmentManager;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.example.chorest_app.Fragments.MapFragment;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class AddChorestActivity extends AppCompatActivity {
 
+    private static final String TAG = "AddChorestActivity";
     private RadioGroup rgLocation;
     private RadioButton rbCurrentLocation;
     private RadioButton rbChooseLocation;
     private Button btCalculateMap;
+    private EditText etChorestName;
     private static final int  RC_TO_MAP  = 23;
 
+    private static final String  KEY_CHOREST_NAME = "name";
+
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +48,7 @@ public class AddChorestActivity extends AppCompatActivity {
         rbCurrentLocation = findViewById(R.id.rbCurrentLocation);
         rbChooseLocation = findViewById(R.id.rbChooseLocation);
         btCalculateMap = findViewById(R.id.btCalculateMap);
+        etChorestName = findViewById((R.id.etChorestName));
 
         // Go to the generated map of the user's chorest route
         btCalculateMap.setOnClickListener(new View.OnClickListener() {
@@ -43,6 +59,32 @@ public class AddChorestActivity extends AppCompatActivity {
                 // Else, leave the button greyed out
 
                 goToMap();
+            }
+        });
+
+        etChorestName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String name = etChorestName.getText().toString();
+
+                Map<String, Object> chorestRoute = new HashMap<>();
+                chorestRoute.put(KEY_CHOREST_NAME, name);
+
+                db.collection("chorests")
+                        .add(chorestRoute)
+                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                            @Override
+                            public void onSuccess(DocumentReference documentReference) {
+                                Log.d(TAG, "onSuccess: Added new chorests");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d(TAG, "onFailure: Failed to add chorests");
+                            }
+                        });
             }
         });
 

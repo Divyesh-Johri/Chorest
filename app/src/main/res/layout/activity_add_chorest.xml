@@ -87,7 +87,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.454"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/etChorestName" />
+            app:layout_constraintTop_toBottomOf="@+id/etChorestName"
+            />
 
         <TextView
             android:id="@+id/textView3"
@@ -95,7 +96,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="40dp"
-            android:text="Add a destinations:"
+            android:text="Add destinations:"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/etTypeAddress" />
@@ -146,6 +147,7 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="8dp"
             android:ems="10"
+            android:hint="Street Address"
             android:inputType="textPostalAddress"
             android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
@@ -169,6 +171,7 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="20dp"
             android:ems="10"
+            android:hint="Street Address"
             android:inputType="textPostalAddress"
             android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
@@ -179,13 +182,25 @@
             android:id="@+id/etChorestName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="8dp"
             android:ems="10"
+            android:hint="Chorest Name"
             android:inputType="textPersonName"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rvCalculatedRoutes"
+            app:layout_constraintTop_toBottomOf="@+id/textView"
             tools:text="Chorest Name" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:text="Name of Chorest:"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rvCalculatedRoutes" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
