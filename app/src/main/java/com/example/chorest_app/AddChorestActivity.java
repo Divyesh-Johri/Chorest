@@ -19,6 +19,8 @@ import android.widget.Toast;
 import com.example.chorest_app.Fragments.MapFragment;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -37,13 +39,16 @@ public class AddChorestActivity extends AppCompatActivity {
 
     private static final String  KEY_CHOREST_NAME = "name";
 
+    private FirebaseAuth mAuth;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_chorest);
 
+        mAuth = FirebaseAuth.getInstance();
         rgLocation = findViewById(R.id.rgLocation);
         rbCurrentLocation = findViewById(R.id.rbCurrentLocation);
         rbChooseLocation = findViewById(R.id.rbChooseLocation);
@@ -58,31 +63,34 @@ public class AddChorestActivity extends AppCompatActivity {
                 // If the user has added a start and at least one destination location, show button
                 // Else, leave the button greyed out
 
-                goToMap();
+                goToMain();
             }
         });
 
         etChorestName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                FirebaseUser currentUser = mAuth.getCurrentUser();
 
                 String name = etChorestName.getText().toString();
 
                 Map<String, Object> chorestRoute = new HashMap<>();
                 chorestRoute.put(KEY_CHOREST_NAME, name);
 
-                db.collection("chorests")
+                db.collection("users").document(currentUser.getUid()).collection("chorests")
                         .add(chorestRoute)
                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                             @Override
                             public void onSuccess(DocumentReference documentReference) {
                                 Log.d(TAG, "onSuccess: Added new chorests");
+                                Toast.makeText(AddChorestActivity.this, "Chorests Route Saved", Toast.LENGTH_SHORT).show();
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 Log.d(TAG, "onFailure: Failed to add chorests");
+                                Toast.makeText(AddChorestActivity.this, "Chorests Route Failed to Save", Toast.LENGTH_SHORT).show();
                             }
                         });
             }
@@ -111,34 +119,55 @@ public class AddChorestActivity extends AppCompatActivity {
         }
     }
 
-    private void goToMap(){
+    private void goToMain(){
+
+
+        try {
+            Log.d(TAG, "Successfully signed out");
+            Toast.makeText(this, "Successfully saved chorest", Toast.LENGTH_SHORT).show();
+
+            Intent i = new Intent(this,MainActivity.class);
+            startActivity(i);
+            finish();
+
+        } catch (Exception e) {
+            Log.w(TAG, "Issue with signout", e);
+            Toast.makeText(this, "Failed to save chorest", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+
         /*Intent i = new Intent(this, MainActivity.class);
 
-        i.putExtra("keyBoolean", true);
+        //i.putExtra("keyBoolean", true);
         startActivity(i);
         finish();*/
 
-        Intent i = getIntent();
-        startActivityForResult(i,RC_TO_MAP);
+        /*Intent i = getIntent();
+        startActivityForResult(i,RC_TO_MAP);*/
     }
 
-    @Override
+    /*@Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RC_TO_MAP){
 
-            FragmentManager fm = getSupportFragmentManager();
+            Intent i = new Intent(this, MainActivity.class);
+            startActivity(i);
+            finish();
+
+           *//* FragmentManager fm = getSupportFragmentManager();
             MapFragment chorestMap = new MapFragment();
-            fm.beginTransaction().replace(R.id.addChorestContainer, chorestMap).commit();
+            fm.beginTransaction().replace(R.id.addChorestContainer, chorestMap).commit();*//*
 
 
             Toast.makeText(AddChorestActivity.this, "Going to Map", Toast.LENGTH_SHORT).show();
 
-            //finish();
+
         }
         else{
             Toast.makeText(AddChorestActivity.this, "Error going to Map", Toast.LENGTH_SHORT).show();
         }
-    }
+    }*/
 }

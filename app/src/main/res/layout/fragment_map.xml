@@ -5,10 +5,21 @@
     android:layout_height="match_parent"
     tools:context=".Fragments.MapFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="map fragment" />
+        android:orientation="vertical">
 
+        <Spinner
+            android:id="@+id/spMapDropDown"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/btn_dropdown"
+            android:paddingTop="32dp" />
+
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/mvChorestMap"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
 </FrameLayout>
