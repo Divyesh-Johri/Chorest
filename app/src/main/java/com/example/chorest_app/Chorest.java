@@ -4,9 +4,6 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.codepath.asynchttpclient.AsyncHttpClient;
-import com.codepath.asynchttpclient.RequestParams;
-import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -28,7 +25,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import okhttp3.Headers;
 
 
 public class Chorest {
@@ -36,20 +32,21 @@ public class Chorest {
     public static final String TAG = "Chorest Object";
 
     // Properties for Chorest object
-    public String id;
-    public String name;
-    public Timestamp timestamp;
-    public double location_latitude;
-    public double location_longitude;
-    public String[] chores;
-    public String[] route;
+    private String id;
+    private String name;
+    private Timestamp timestamp;
+    private double location_latitude;
+    private double location_longitude;
+    private String[] chores;
+    private String[] route;
+    private String[] route_addresses;
+    private int route_distance;
+    private boolean find_new_route;
 
     // Firestore database initialization
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     // Current User
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    // Async HTTP Client
-    AsyncHttpClient httpClient = new AsyncHttpClient();
     // User ID
     String uID = user.getUid();
     // chorests collection path
@@ -57,13 +54,52 @@ public class Chorest {
 
 
 
-    // Constructor
+    // Constructor for retrieving existing Chorest
     public Chorest(String id) {
         this.id = id;
         findChorest();
     }
 
-    // Constructor for creating new Chorest
+    // Constructor for initializing new Chorest
+    // Requires name of chorest, latitude and longitude of user's specified location, and a list of chores
+    public Chorest(String name, double loc_lat, double loc_long, String[] chores){
+        this.name = name;
+        this.location_latitude = loc_lat;
+        this.location_longitude = loc_long;
+        this.chores = chores;
+        this.find_new_route = false;
+        createChorest();
+    }
+
+    // Creates new chorest in Firestore
+    private void createChorest() {
+        // Map necessary data
+        Map<String, Object> chorestDoc = new HashMap<>();
+        chorestDoc.put("name", this.name);
+        chorestDoc.put("timestamp",  FieldValue.serverTimestamp());
+        chorestDoc.put("location_latitude", this.location_latitude);
+        chorestDoc.put("location_longitude", this.location_longitude);
+        chorestDoc.put("chores", this.chores);
+        chorestDoc.put("find_new_route", this.find_new_route);
+
+        db.collection(currentPath)
+                .add(chorestDoc)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d(TAG, "createChorest - DocumentSnapshot written with ID: " + documentReference.getId());
+                        // Set id of new document and set timestamp
+                        id = documentReference.getId();
+                        getCurrentTimestamp();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "createChorest - Error adding document", e);
+                    }
+                });
+    }
 
     // Find indicated chorest in Firestore and fill out properties
     private void findChorest() {
@@ -83,6 +119,9 @@ public class Chorest {
                         location_longitude = (Double) chorestDoc.get("location_longitude");
                         chores = (String[]) chorestDoc.get("chores");
                         route = (String[]) chorestDoc.get("route");
+                        route_addresses = (String[]) chorestDoc.get("route_addresses");
+                        route_distance = (Integer) chorestDoc.get("route_distance");
+                        find_new_route = (Boolean) chorestDoc.get("find_new_route");
                     } else {
                         Log.d(TAG, "findChorest - No such document");
                     }
@@ -104,14 +143,19 @@ public class Chorest {
         chorestDoc.put("location_latitude", this.location_latitude);
         chorestDoc.put("location_longitude", this.location_longitude);
         chorestDoc.put("chores", this.chores);
-        chorestDoc.put("route", this.route);
+        chorestDoc.put("find_new_route", this.find_new_route);
 
         db.collection(currentPath).document(this.id)
-                .set(chorestDoc)
+                .update(chorestDoc)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "updateChorest - DocumentSnapshot successfully written!");
+
+                        // If new routes have been created
+                        if(find_new_route){
+                            getCurrentRoutes();
+                        }
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -122,120 +166,81 @@ public class Chorest {
                 });
     }
 
-    // Search for places near specified location
-    private ArrayList<String[]> retrievePlaces() {
-        // List where each element is a list of addresses for each chore
-        ArrayList<String[]> places = new ArrayList<>();
-
-        // Find addresses of locations for each chore
-        String httpAddress = "https://maps.googleapis.com/maps/api/place/textsearch/json?";
-        for (String chore : this.chores){
-            // Set parameters for chore
-            RequestParams params = new RequestParams();
-            params.put("query", chore);
-            params.put("location", "" + this.location_latitude + "," + this.location_longitude);
-            params.put("fields", "formatted_address");
-            params.put("radius", "100");
-            params.put("key", R.string.places_api_key);
-
-            httpClient.get(httpAddress, params, new JsonHttpResponseHandler() {
-                @Override
-                public void onSuccess(int i, Headers headers, JSON json) {
-                    Log.d(TAG, "retrievePlaces - Addresses received: " + json.jsonObject.toString());
-                    // Add json address in places as a String[] of name, address, place_id
-                    try {
-                        JSONObject results = json.jsonObject.getJSONArray("results").getJSONObject(0);
-                        String[] address = {results.getString("name"), results.getString("formatted_address"), results.getString("place_id")};
-                        places.add(address);
-                    } catch (JSONException e) {
-                        Log.e(TAG, "retrievePlaces - JSON Parsing error: ", e);
-                    }
-                }
-
-                @Override
-                public void onFailure(int i, Headers headers, String s, Throwable throwable) {
-                    Log.e(TAG, "retrievePlaces - Failed to retrieve addresses: ", throwable);
-                }
-            });
-        }
-
-        if(places.isEmpty()){
-            return null;
-        }
-        return places;
-    }
-
-    // Find shortest distance between 2 locations in meters
-    private Integer findDistance(String place_id_origin, String place_id_dest){
-        // Return value
-        ArrayList<Integer> returnDistance = new ArrayList<>();
-        // Set up HTTP call
-        String httpAddress = "https://maps.googleapis.com/maps/api/distancematrix/json?";
-        RequestParams params = new RequestParams();
-        params.put("origins", "place_id:" + place_id_origin);
-        params.put("destinations", "place_id:" + place_id_dest);
-        params.put("key", R.string.places_api_key);
-
-        httpClient.get(httpAddress, params, new JsonHttpResponseHandler() {
+    private void getCurrentRoutes() {
+        DocumentReference docRef = db.collection(currentPath).document(this.id);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onSuccess(int i, Headers headers, JSON json) {
-                Log.d(TAG, "findDistance - Distance received: " + json.jsonObject.toString());
-                try {
-                    String distanceString = json.jsonObject.getJSONArray("rows").getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("distance").getString("text");
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Log.d(TAG, "getCurrentTimestamp - DocumentSnapshot data: " + document.getData());
+                        // Retrieve and set route properties ONLY if properties are updated
+                        Map<String, Object> chorestDoc = document.getData();
+                        find_new_route = (Boolean) chorestDoc.get("find_new_route");
 
-                    // Format distance string and return an integer in integer meters
-                    char[] chars = distanceString.toCharArray();
-                    char[] numberChars = new char[chars.length];
-                    for(int n = 0; n < chars.length; n++){
-                        if(Character.isDigit(chars[n])){
-                            numberChars[n] = chars[n];
+                        // If values haven't been updated, try again
+                        if (find_new_route){
+                            getCurrentRoutes();
                         }
-                    }
-                    int distance = Integer.parseInt(String.valueOf(numberChars));
-                    // Check if it's in kilometers
-                    if(distanceString.contains("km")){
-                        distance *= 1000;
-                    }
 
-                    returnDistance.add(distance);
+                        route = (String[]) chorestDoc.get("route");
+                        route_addresses = (String[]) chorestDoc.get("route_addresses");
+                        route_distance = (Integer) chorestDoc.get("route_distance");
 
-                } catch (JSONException e) {
-                    Log.e(TAG, "findDistance - JSON Parsing error: ", e);
+                    } else {
+                        Log.d(TAG, "getCurrentTimestamp - No such document");
+                    }
+                } else {
+                    Log.d(TAG, "getCurrentTimestamp - get failed with ", task.getException());
                 }
-            }
-
-            @Override
-            public void onFailure(int i, Headers headers, String s, Throwable throwable) {
-                Log.e(TAG, "findDistance - Failed to retrieve distances: ", throwable);
             }
         });
-
-        if(returnDistance.isEmpty()){
-            return null;
-        }
-        return returnDistance.get(0);
     }
 
-    // Create graph with addresses
-    private void createGraph(ArrayList<String[]> places){
-        // Dictionary java
-        for(String[] location1 : places){
-            Map<String[], Integer> content = new HashMap<>();
-            for(String[] location2 : places){
-                if(location1 != location2){
-                    content.put(location2, findDistance(location1[2], location2[2]));
+    // Fetches new timestamp created in Firestore when field is updated
+    private void getCurrentTimestamp() {
+        DocumentReference docRef = db.collection(currentPath).document(this.id);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Log.d(TAG, "getCurrentTimestamp - DocumentSnapshot data: " + document.getData());
+                        // Retrieve and set timestamp property
+                        Map<String, Object> chorestDoc = document.getData();
+                        timestamp = (Timestamp) chorestDoc.get("timestamp");
+                    } else {
+                        Log.d(TAG, "getCurrentTimestamp - No such document");
+                    }
+                } else {
+                    Log.d(TAG, "getCurrentTimestamp - get failed with ", task.getException());
                 }
             }
-        }
+        });
     }
 
-    // Primm's algorithm
+    // Trigger to calculate new routes
+    public void findNewRoute(){
+        this.find_new_route = true;
+        updateChorest();
+    }
 
-
-    // Calculate shortest route action method
+    // Returns true when route fields are updated
+    // Meant for use after calling findNewRoute()
+    public Boolean isRouteUpdated(){
+        if (this.find_new_route){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
 
 
     // Getters and Setters
+    // findNewRoute will always update all values.
 
     public void setName(String name) {
         this.name = name;
@@ -261,15 +266,17 @@ public class Chorest {
         return name;
     }
 
-    public double getLocation_latitude() {
+    public double getLocLat() {
         return location_latitude;
     }
 
-    public double getLocation_longitude() {
+    public double getLocLong() {
         return location_longitude;
     }
 
+    // Fetches up-to-date timestamp from Firestore itself
     public Timestamp getTimestamp() {
+        getCurrentTimestamp();
         return timestamp;
     }
 
@@ -279,5 +286,13 @@ public class Chorest {
 
     public String[] getRoute() {
         return route;
+    }
+
+    public String[] getRoute_addresses() {
+        return route_addresses;
+    }
+
+    public int getRoute_distance() {
+        return route_distance;
     }
 }
