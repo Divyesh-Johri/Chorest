@@ -55,19 +55,10 @@ public class AddChorestActivity extends AppCompatActivity {
         btCalculateMap = findViewById(R.id.btCalculateMap);
         etChorestName = findViewById((R.id.etChorestName));
 
-        // Go to the generated map of the user's chorest route
+
+
+        // Save the chorest info to firebase
         btCalculateMap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                // If the user has added a start and at least one destination location, show button
-                // Else, leave the button greyed out
-
-                goToMain();
-            }
-        });
-
-        etChorestName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -84,6 +75,7 @@ public class AddChorestActivity extends AppCompatActivity {
                             public void onSuccess(DocumentReference documentReference) {
                                 Log.d(TAG, "onSuccess: Added new chorests");
                                 Toast.makeText(AddChorestActivity.this, "Chorests Route Saved", Toast.LENGTH_SHORT).show();
+                                goToMain();
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {
@@ -93,6 +85,8 @@ public class AddChorestActivity extends AppCompatActivity {
                                 Toast.makeText(AddChorestActivity.this, "Chorests Route Failed to Save", Toast.LENGTH_SHORT).show();
                             }
                         });
+
+
             }
         });
 
@@ -119,12 +113,13 @@ public class AddChorestActivity extends AppCompatActivity {
         }
     }
 
+    // Go back to the home page
     private void goToMain(){
 
 
         try {
             Log.d(TAG, "Successfully signed out");
-            Toast.makeText(this, "Successfully saved chorest", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Successfully saved chorest", Toast.LENGTH_SHORT).show();
 
             Intent i = new Intent(this,MainActivity.class);
             startActivity(i);
@@ -136,38 +131,8 @@ public class AddChorestActivity extends AppCompatActivity {
             return;
         }
 
-
-        /*Intent i = new Intent(this, MainActivity.class);
-
-        //i.putExtra("keyBoolean", true);
-        startActivity(i);
-        finish();*/
-
-        /*Intent i = getIntent();
-        startActivityForResult(i,RC_TO_MAP);*/
+        
     }
 
-    /*@Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == RC_TO_MAP){
-
-            Intent i = new Intent(this, MainActivity.class);
-            startActivity(i);
-            finish();
-
-           *//* FragmentManager fm = getSupportFragmentManager();
-            MapFragment chorestMap = new MapFragment();
-            fm.beginTransaction().replace(R.id.addChorestContainer, chorestMap).commit();*//*
-
-
-            Toast.makeText(AddChorestActivity.this, "Going to Map", Toast.LENGTH_SHORT).show();
-
-
-        }
-        else{
-            Toast.makeText(AddChorestActivity.this, "Error going to Map", Toast.LENGTH_SHORT).show();
-        }
-    }*/
 }

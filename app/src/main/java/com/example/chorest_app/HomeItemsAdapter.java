@@ -8,14 +8,55 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+
 import java.util.List;
 
 // Responsible for displaying data from the model into a row in the recycler view
-public class HomeItemsAdapter extends RecyclerView.Adapter<HomeItemsAdapter.ViewHolder> {
+//public class HomeItemsAdapter extends RecyclerView.Adapter<HomeItemsAdapter.ViewHolder> {
+
+public class HomeItemsAdapter extends FirestoreRecyclerAdapter{
+
+    public HomeItemsAdapter(@NonNull FirestoreRecyclerOptions options) {
+        super(options);
+    }
+
+    @Override
+    protected void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position, @NonNull Object model) {
+
+    }
+
+    @NonNull
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return null;
+    }
 
 
-    //edit
-    public interface OnClickListener {
+    class Chorest extends RecyclerView.ViewHolder{
+
+        public Chorest(View itemView){
+            super(itemView);
+        }
+    }
+
+    // To delete a route
+    public interface  OnLongClickListener{
+
+        void onItemLongClicked(int position);
+    }
+
+    // To edit a route
+    public interface  OnClickListener{
+
+        void onItemClicked(int position);
+    }
+
+
+
+
+    /*public interface OnClickListener {
         void onItemClicked(int position);
     }
     //end of edit
@@ -88,5 +129,5 @@ public class HomeItemsAdapter extends RecyclerView.Adapter<HomeItemsAdapter.View
                 }
             });
         }
-    }
+    }*/
 }
