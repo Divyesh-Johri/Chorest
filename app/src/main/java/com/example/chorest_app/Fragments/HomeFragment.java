@@ -23,6 +23,8 @@ import com.example.chorest_app.HomeModel;
 import com.example.chorest_app.R;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -57,12 +59,7 @@ public class HomeFragment extends Fragment {
     public static final String KEY_ITEM_TEXT = "item_text";
     public static final String KEY_ITEM_POSITION = "item_position";
     public static final int EDIT_TEXT_CODE = 20;
-    //edit
 
-
-    //List<String> homeItems;
-
-    //RecyclerView rvMap;
     RecyclerView rvSavedChorests;
     //HomeItemsAdapter homeItemsAdapter;
     private FirestoreRecyclerAdapter adapter;
@@ -285,14 +282,31 @@ public class HomeFragment extends Fragment {
 
     }
 
-   /* public void onItemLongClick(int position) {
+    public void onItemLongClick(int position) {
     // firebase code to delete data
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+
+        firebaseFirestore.collection("users").document(currentUser.getUid()).collection("chorests").document()
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error deleting document", e);
+                    }
+                });
     }
 
     //@Override
     public void onItemClick(int position) {
     // code to go to add chorest edit activity page
-    }*/
+    }
 
 
 
