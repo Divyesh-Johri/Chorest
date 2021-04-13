@@ -6,26 +6,30 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.chorest_app.AddChorestActivity;
-import com.example.chorest_app.ChorestsModel;
 //import com.example.chorest_app.ItemsAdapter;
-import com.example.chorest_app.LoginActivity;
+//import com.example.chorest_app.HomeEditActivity;
+import com.example.chorest_app.HomeModel;
 import com.example.chorest_app.R;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-
-import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -45,25 +49,26 @@ public class HomeFragment extends Fragment {
     private String mParam2;
 
     private FirebaseFirestore firebaseFirestore;
-    private RecyclerView rvSavedChorests;
+    private FirebaseAuth mAuth;
+
     private FloatingActionButton fabAddChorest;
+    private OnItemLongClickListener longListener;
+    private OnItemClickListener clickListener;
 
-    //ItemsAdapter itemsAdapter;
+    //edit
+    public static final String KEY_ITEM_TEXT = "item_text";
+    public static final String KEY_ITEM_POSITION = "item_position";
+    public static final int EDIT_TEXT_CODE = 20;
 
-
+    RecyclerView rvSavedChorests;
+    //HomeItemsAdapter homeItemsAdapter;
+    private FirestoreRecyclerAdapter adapter;
 
     public HomeFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment HomeFragment.
-     */
+
     // TODO: Rename and change types and number of parameters
     public static HomeFragment newInstance(String param1, String param2) {
         HomeFragment fragment = new HomeFragment();
@@ -97,10 +102,52 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        firebaseFirestore = FirebaseFirestore.getInstance();
 
         fabAddChorest =  view.findViewById(R.id.fabAddChorest);
         rvSavedChorests = view.findViewById(R.id.rvSavedChorests);
 
+        Query query = firebaseFirestore.collection("users").document(currentUser.getUid()).collection("chorests");
+
+        //RecyclerOptions
+        FirestoreRecyclerOptions<HomeModel> options = new FirestoreRecyclerOptions.Builder<HomeModel>()
+                .setQuery(query, HomeModel.class)
+                .build();
+
+        adapter = new FirestoreRecyclerAdapter<HomeModel, HomeViewHolder>(options) {
+
+
+
+            @NonNull
+            @Override
+            public HomeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.model_home_list, parent, false);
+                //view.setOnLongClickListener();
+                return new HomeViewHolder(view);
+            }
+
+            @Override
+            protected void onBindViewHolder(@NonNull HomeViewHolder holder, int position, @NonNull HomeModel model) {
+                holder.tvHomeName.setText(model.getName());
+
+
+                /*holder.ViewHolder.setOnClickListener(new HomeViewHolder.Clicklistener()){
+
+                }*/
+            }
+
+
+
+        };
+        rvSavedChorests.setHasFixedSize(true);
+        rvSavedChorests.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rvSavedChorests.setAdapter(adapter);
+
+
+        // Floating action button to add a chorest
         fabAddChorest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,26 +157,193 @@ public class HomeFragment extends Fragment {
 
         });
 
+        //adapter.setOnItemClickListener(this);
 
 
-
-                //firebaseFirestore = FirebaseFirestore.getInstance();
-        //rvSavedChorests = view.findViewById(R.id.rvSavedChorests);
-
-        // Query to get data from Firestore
-       // Query query = firebaseFirestore.collection("chorests");
-        // can pull in by certain order by ".orderBy(...)
-
-        //RecyclerOptions
-        //FirestoreRecyclerOptions<ChorestsModel> options = new FirestoreRecyclerOptions<>().setQuery(query);
     }
+
+    /*@Override
+    public void onItemLongClick(int position) {
+
+    }
+
+    @Override
+    public void onItemClick(int position) {
+
+    }*/
+
+
+    private class HomeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+
+        private TextView tvHomeName;
+
+        public HomeViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tvHomeName = itemView.findViewById(R.id.tvHomeName);
+
+            itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
+
+/*
+
+            // OnLongClick Listener to delete a
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+
+                    int position = getAdapterPosition();
+
+                    // The user double clicked on the item which will cause a crash
+                    if (position != RecyclerView.NO_POSITION && longListener != null){
+                        longListener.onItemLongClick(position);
+                    }
+                    return true;
+                }
+            });
+
+            // OnClick Listener to edit a chorest
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    int position = getAdapterPosition();
+
+                    // The user double clicked on the item which will cause a crash
+                    if (position != RecyclerView.NO_POSITION && clickListener != null){
+                        clickListener.onItemClick(position);
+                    }
+                }
+            });
+*/
+        }
+
+
+        @Override
+        public void onClick(View v) {
+            Toast.makeText(getActivity(), "On click listener", Toast.LENGTH_SHORT).show();
+            int position = getAdapterPosition();
+
+            // The user double clicked on the item which will cause a crash
+            if (position != RecyclerView.NO_POSITION && clickListener != null){
+                clickListener.onItemClick(position);
+            }
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+
+            Toast.makeText(getActivity(), "On long click listener", Toast.LENGTH_SHORT).show();
+            int position = getAdapterPosition();
+
+            // The user double clicked on the item which will cause a crash
+            if (position != RecyclerView.NO_POSITION && longListener != null){
+                longListener.onItemLongClick(position);
+            }
+            return true;
+
+        }
+    }
+
+    // To delete a route
+    public interface OnItemLongClickListener {
+
+
+        void onItemLongClick(int position);
+    }
+
+    // To edit a route
+    public interface OnItemClickListener {
+
+        void onItemClick(int position);
+    }
+
+    /*public void setOnItemLongClickListener(OnItemLongClickListener longListener){
+        this.longListener = longListener;
+
+    }
+
+    public void setOnItemClickListener(OnItemClickListener clickListener){
+        this.clickListener = clickListener;
+    }*/
+
+    @Override
+    public void onStop() {
+
+        super.onStop();
+        adapter.stopListening();
+
+    }
+
+    @Override
+    public void onStart() {
+
+        super.onStart();
+        adapter.startListening();
+
+    }
+
+    public void onItemLongClick(int position) {
+    // firebase code to delete data
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+
+        firebaseFirestore.collection("users").document(currentUser.getUid()).collection("chorests").document()
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error deleting document", e);
+                    }
+                });
+    }
+
+    //@Override
+    public void onItemClick(int position) {
+    // code to go to add chorest edit activity page
+    }
+
+
+
+
+
+    //handle the result of the edit activity
+    //@SuppressLint("MissingSuperCall")
+
+
+/*@Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (resultCode == RESULT_OK && requestCode == EDIT_TEXT_CODE) {
+            //Retrieve the updated text value
+            String itemText = data.getStringExtra(KEY_ITEM_TEXT);
+            //extract the original position of the  edited item from the position key
+            int position = data.getExtras().getInt(KEY_ITEM_POSITION);
+
+            //update the model with the new item
+            homeItems.set(position, itemText);
+            //notify the adapter
+            homeItemsAdapter.notifyItemChanged(position);
+            //persist changes
+            //saveItems(); Firebase save
+            Toast.makeText(getActivity().getApplicationContext(), "Chorest updated successfully!", Toast.LENGTH_SHORT).show();
+
+        } else {
+            Log.w("MainActivity", "Unknown call to onActivityResult");
+        }
+    }*/
+
 
 
     private void goToAddChorest() {
 
         try {
             Log.d(TAG, "Successfully switched to Add Chorest page.");
-            Toast.makeText(getActivity(), "Add Chorest Page", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getActivity(), "Add Chorest Page", Toast.LENGTH_SHORT).show();
 
             Intent i = new Intent(getActivity(), AddChorestActivity.class);
             startActivity(i);
@@ -141,4 +355,133 @@ public class HomeFragment extends Fragment {
             return;
         }
     }
+
+
 }
+
+
+
+
+/*
+public class MainActivity extends AppCompatActivity {
+
+    //edit
+    public static final String KEY_ITEM_TEXT = "item_text";
+    public static final String KEY_ITEM_POSITION = "item_position";
+    public static final int EDIT_TEXT_CODE = 20;
+    //edit
+
+    List<String> items;
+
+    Button btnAdd;
+    EditText etItem;
+    RecyclerView rvItems;
+    ItemsAdapter itemsAdapter;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        btnAdd = findViewById(R.id.btnAdd);
+        etItem = findViewById(R.id.etItem);
+        rvItems = findViewById(R.id.rvItems);
+
+        loadItems();
+
+        ItemsAdapter.OnLongClickListener OnLongClickListener = new ItemsAdapter.OnLongClickListener() {
+            @Override
+            public void onItemLongClicked(int position) {
+                // Delete the item from the model
+                items.remove(position);
+                //Notify the adapter
+                itemsAdapter.notifyItemRemoved(position);
+                Toast.makeText(getApplicationContext(), "Item was removed ", Toast.LENGTH_SHORT).show(); //Chore was deleted
+                saveItems();
+
+            }
+        };
+        //edit
+        ItemsAdapter.OnClickListener onClickListener = new ItemsAdapter.OnClickListener() {
+            @Override
+            public void onItemClicked(int position) {
+                //create the new activity
+                Intent i = new Intent(MainActivity.this, EditActivity.class);
+                //pass the data being edited
+                i.putExtra(KEY_ITEM_TEXT,items.get(position));
+                i.putExtra(KEY_ITEM_POSITION,position);
+                //display the activity
+                startActivityForResult(i, EDIT_TEXT_CODE);
+            }
+        };
+        //edit
+        itemsAdapter = new ItemsAdapter(items, OnLongClickListener, onClickListener); //edit onClickListener
+        rvItems.setAdapter(itemsAdapter);
+        rvItems.setLayoutManager(new LinearLayoutManager(this));
+
+        btnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String todoItem = etItem.getText().toString();
+                // Add item to the model
+                items.add(todoItem);
+                // Notify adapter that an item is inserted
+                itemsAdapter.notifyItemInserted(items.size() - 1);
+                etItem.setText("");
+                Toast.makeText(getApplicationContext(), "Item was added", Toast.LENGTH_SHORT).show();
+                saveItems();
+            }
+        });
+
+    }
+
+    //handle the result of the edit activity
+    @SuppressLint("MissingSuperCall")
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (resultCode == RESULT_OK && requestCode == EDIT_TEXT_CODE) {
+            //Retrieve the updated text value
+            String itemText = data.getStringExtra(KEY_ITEM_TEXT);
+            //extract the original position of the  edited item from the position key
+            int position = data.getExtras().getInt(KEY_ITEM_POSITION);
+
+            //update the model with the new item
+            items.set(position, itemText)
+            //notify the adapter
+            itemsAdapter.notifyItemChanged(position);
+            //persist changes
+            saveItems();
+            Toast.makeText(getApplicationContext(), "Chorest updated successfully!", Toast.LENGTH_SHORT).show();
+
+        } else {
+            Log.w("MainActivity", "Unknown call to onActivityResult");
+        }
+    }
+
+    //Persistence
+    private File getDataFile() {
+
+        return new File(getFilesDir(),"data.txt");
+    }
+
+    // This function will load items by reading every line of the data file
+    private void loadItems() {
+        try {
+            items = new ArrayList<>(FileUtils.readLines(getDataFile(), Charset.defaultCharset()));
+        } catch (IOException e) {
+            Log.e("MainActivity", "Error reading items",e);
+            items = new ArrayList<>();
+        }
+    }
+    // This function saves items by writing them into the data file
+    private void saveItems() {
+        try {
+            FileUtils.writeLines(getDataFile(), items);
+        } catch (IOException e) {
+            Log.e("MainActivity", "Error writing items",e);
+        }
+    }
+}
+
+
+*/

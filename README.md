@@ -28,7 +28,8 @@ Chorest is an app that allows users to find the shortest route between locations
 * [x] User can view their chorests (Home page)
 * [x] User can view profile and logout (Profile page)
 * [x] User can view maps (Maps page)
-* User can add and edit and delete a chorest (Home + Chorest Page)
+* [x] User can add a chorest (Home + Chorest Page)
+* User can edit and delete a chorest (Home + Chorest Page)
 * User can navigate to maps page with selected route (Chorest page)
 * User can view new unoptimal routes and go back to old ones (Add chorest page)
 * User can view a calculated shortest route of a chorest (Add chorest page)
@@ -44,6 +45,10 @@ Chorest is an app that allows users to find the shortest route between locations
 
 <img src = "https://github.com/Divyesh-Johri/Chorest/blob/main/Chorest3.gif" width=250><br>
 Gif Link: https://github.com/Divyesh-Johri/Chorest/blob/main/Chorest3.gif
+
+
+<img src = "https://github.com/Divyesh-Johri/Chorest/blob/main/Chorest4.gif" width=250><br>
+Gif Link: https://github.com/Divyesh-Johri/Chorest/blob/main/Chorest4.gif
 
 ### 2. Screen Archetypes
 
