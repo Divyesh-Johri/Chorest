@@ -68,7 +68,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="32dp"
                 android:editable="false"
-                android:text="Your Chorests"
+                android:text="Your Chorests:"
                 android:textSize="18sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvHomeLabel" />

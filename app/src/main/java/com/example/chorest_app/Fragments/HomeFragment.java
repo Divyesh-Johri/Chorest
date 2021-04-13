@@ -1,6 +1,5 @@
 package com.example.chorest_app.Fragments;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -14,17 +13,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.chorest_app.AddChorestActivity;
-import com.example.chorest_app.ChorestsModel;
 //import com.example.chorest_app.ItemsAdapter;
 //import com.example.chorest_app.HomeEditActivity;
-import com.example.chorest_app.HomeItemsAdapter;
 import com.example.chorest_app.HomeModel;
-import com.example.chorest_app.LoginActivity;
 import com.example.chorest_app.R;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -33,10 +28,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-
-import java.util.List;
-
-import static android.app.Activity.RESULT_OK;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -59,6 +50,8 @@ public class HomeFragment extends Fragment {
     private FirebaseAuth mAuth;
 
     private FloatingActionButton fabAddChorest;
+    private OnItemLongClickListener longListener;
+    private OnItemClickListener clickListener;
 
     //edit
     public static final String KEY_ITEM_TEXT = "item_text";
@@ -128,6 +121,9 @@ public class HomeFragment extends Fragment {
                 .build();
 
         adapter = new FirestoreRecyclerAdapter<HomeModel, HomeViewHolder>(options) {
+
+
+
             @NonNull
             @Override
             public HomeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -138,6 +134,11 @@ public class HomeFragment extends Fragment {
             @Override
             protected void onBindViewHolder(@NonNull HomeViewHolder holder, int position, @NonNull HomeModel model) {
                 holder.tvHomeName.setText(model.getName());
+
+
+                /*holder.ViewHolder.setOnClickListener(new HomeViewHolder.Clicklistener()){
+
+                }*/
             }
 
 
@@ -158,53 +159,99 @@ public class HomeFragment extends Fragment {
 
         });
 
+        //adapter.setOnItemClickListener(this);
+
 
     }
 
-        // Firebase code to get items saved there
-        //loadItems();
+    /*@Override
+    public void onItemLongClick(int position) {
 
-        /*HomeItemsAdapter.OnLongClickListener OnLongClickListener = new HomeItemsAdapter.OnLongClickListener() {
-            @Override
-            public void onItemLongClicked(int position) {
-                // Delete the item from the model
-                homeItems.remove(position);
-                //Notify the adapter
-                homeItemsAdapter.notifyItemRemoved(position);
-                Toast.makeText(getActivity().getApplicationContext(), "Item was removed ", Toast.LENGTH_SHORT).show(); //Chore was deleted
-                //saveItems(); // Firebase is where it's saved
+    }
 
-            }
-        };
-        //edit
-        HomeItemsAdapter.OnClickListener onClickListener = new HomeItemsAdapter.OnClickListener() {
-            @Override
-            public void onItemClicked(int position) {
-                //create the new activity
-                Intent i = new Intent(getActivity(), HomeEditActivity.class);
-                //pass the data being edited
-                i.putExtra(KEY_ITEM_TEXT, homeItems.get(position));
-                i.putExtra(KEY_ITEM_POSITION,position);
-                //display the activity
-                startActivityForResult(i, EDIT_TEXT_CODE);
-            }
-        };
-        //edit
-        homeItemsAdapter = new HomeItemsAdapter(homeItems, OnLongClickListener); //, onClickListener); //edit onClickListener
-        rvSavedChorests.setAdapter(homeItemsAdapter);
-        rvSavedChorests.setLayoutManager(new LinearLayoutManager(getActivity()));*/
+    @Override
+    public void onItemClick(int position) {
+
+    }*/
 
 
-
-    private class HomeViewHolder extends RecyclerView.ViewHolder {
+    private class HomeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
         private TextView tvHomeName;
 
         public HomeViewHolder(@NonNull View itemView) {
             super(itemView);
             tvHomeName = itemView.findViewById(R.id.tvHomeName);
+
+            itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
+
+/*
+
+            // OnLongClick Listener to delete a
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+
+                    int position = getAdapterPosition();
+
+                    // The user double clicked on the item which will cause a crash
+                    if (position != RecyclerView.NO_POSITION && longListener != null){
+                        longListener.onItemLongClick(position);
+                    }
+                    return true;
+                }
+            });
+
+            // OnClick Listener to edit a chorest
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    int position = getAdapterPosition();
+
+                    // The user double clicked on the item which will cause a crash
+                    if (position != RecyclerView.NO_POSITION && clickListener != null){
+                        clickListener.onItemClick(position);
+                    }
+                }
+            });
+*/
+        }
+
+
+        @Override
+        public void onClick(View v) {
+
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            return false;
         }
     }
+
+    // To delete a route
+    public interface OnItemLongClickListener {
+
+
+        void onItemLongClick(int position);
+    }
+
+    // To edit a route
+    public interface OnItemClickListener {
+
+        void onItemClick(int position);
+    }
+
+    /*public void setOnItemLongClickListener(OnItemLongClickListener longListener){
+        this.longListener = longListener;
+
+    }
+
+    public void setOnItemClickListener(OnItemClickListener clickListener){
+        this.clickListener = clickListener;
+    }*/
 
     @Override
     public void onStop() {
@@ -220,6 +267,15 @@ public class HomeFragment extends Fragment {
         super.onStart();
         adapter.startListening();
 
+    }
+
+    public void onItemLongClick(int position) {
+    // firebase code to delete data
+    }
+
+    //@Override
+    public void onItemClick(int position) {
+    // code to go to add chorest edit activity page
     }
 
 

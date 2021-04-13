@@ -5,24 +5,33 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.chorest_app.Fragments.HomeFragment;
 import com.example.chorest_app.Fragments.MapFragment;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,12 +44,14 @@ public class AddChorestActivity extends AppCompatActivity {
     private RadioButton rbChooseLocation;
     private Button btCalculateMap;
     private EditText etChorestName;
+    private RecyclerView rvCalculatedRoutes;
     private static final int  RC_TO_MAP  = 23;
 
     private static final String  KEY_CHOREST_NAME = "name";
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirestoreRecyclerAdapter adapter;
 
 
     @Override
@@ -54,6 +65,7 @@ public class AddChorestActivity extends AppCompatActivity {
         rbChooseLocation = findViewById(R.id.rbChooseLocation);
         btCalculateMap = findViewById(R.id.btCalculateMap);
         etChorestName = findViewById((R.id.etChorestName));
+        rvCalculatedRoutes = findViewById(R.id.rvCalculatedRoutes);
 
 
 
@@ -89,6 +101,44 @@ public class AddChorestActivity extends AppCompatActivity {
 
             }
         });
+
+
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        Query query = db.collection("users").document(currentUser.getUid()).collection("chorests");
+
+        //RecyclerOptions
+        FirestoreRecyclerOptions<HomeModel> options = new FirestoreRecyclerOptions.Builder<HomeModel>()
+                .setQuery(query, HomeModel.class)
+                .build();
+
+        adapter = new FirestoreRecyclerAdapter<HomeModel, AddChorestActivity.AddChorestViewHolder>(options) {
+
+
+
+            @NonNull
+            @Override
+            public AddChorestActivity.AddChorestViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.model_home_list, parent, false);
+                return new AddChorestActivity.AddChorestViewHolder(view);
+            }
+
+            @Override
+            protected void onBindViewHolder(@NonNull AddChorestActivity.AddChorestViewHolder holder, int position, @NonNull HomeModel model) {
+                holder.tvHomeName.setText(model.getName());
+
+
+                /*holder.ViewHolder.setOnClickListener(new HomeViewHolder.Clicklistener()){
+
+                }*/
+            }
+
+
+
+        };
+        rvCalculatedRoutes.setHasFixedSize(true);
+        rvCalculatedRoutes.setLayoutManager(new LinearLayoutManager(this));
+        rvCalculatedRoutes.setAdapter(adapter);
 
 
     }
@@ -131,8 +181,17 @@ public class AddChorestActivity extends AppCompatActivity {
             return;
         }
 
-        
+
     }
 
+    private class AddChorestViewHolder extends RecyclerView.ViewHolder {
 
+        private TextView tvHomeName;
+
+        public AddChorestViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tvHomeName = itemView.findViewById(R.id.tvHomeName);
+
+        }
+    }
 }
