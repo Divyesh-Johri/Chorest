@@ -128,6 +128,7 @@ public class HomeFragment extends Fragment {
             @Override
             public HomeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
                 View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.model_home_list, parent, false);
+                //view.setOnLongClickListener();
                 return new HomeViewHolder(view);
             }
 
@@ -222,12 +223,27 @@ public class HomeFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
+            Toast.makeText(getActivity(), "On click listener", Toast.LENGTH_SHORT).show();
+            int position = getAdapterPosition();
 
+            // The user double clicked on the item which will cause a crash
+            if (position != RecyclerView.NO_POSITION && clickListener != null){
+                clickListener.onItemClick(position);
+            }
         }
 
         @Override
         public boolean onLongClick(View v) {
-            return false;
+
+            Toast.makeText(getActivity(), "On long click listener", Toast.LENGTH_SHORT).show();
+            int position = getAdapterPosition();
+
+            // The user double clicked on the item which will cause a crash
+            if (position != RecyclerView.NO_POSITION && longListener != null){
+                longListener.onItemLongClick(position);
+            }
+            return true;
+
         }
     }
 
@@ -269,14 +285,14 @@ public class HomeFragment extends Fragment {
 
     }
 
-    public void onItemLongClick(int position) {
+   /* public void onItemLongClick(int position) {
     // firebase code to delete data
     }
 
     //@Override
     public void onItemClick(int position) {
     // code to go to add chorest edit activity page
-    }
+    }*/
 
 
 
