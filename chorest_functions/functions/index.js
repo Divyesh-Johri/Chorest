@@ -137,65 +137,68 @@ function prim(start, graph){
 // ___________________________________________________________________________________
 // Cloud function
 
-// Listen for updates to any chorest document for any user.
-exports.updateRoute = functions.firestore
-    .document('users/{userID}/chorests/{chorestID}')
-    .onUpdate((change, context) => {
-        // Retrieve the current and previous value
-        const data = change.after.data();
-        const previousData = change.before.data();
+// Will return calculated routes and update document with them
+// data: {chorestID}
+exports.updateRoute = functions.https.onCall(async (data, context) => {
+    const uID = context.auth.uid;
+    const chorestID = data.chorestID;
+    var data = {}
 
-        // We'll only update if the user indicates.
-        // This is crucial to prevent infinite loops.
-        if (!data.find_new_route) {
-            return null;
-        }
+    document = await admin.firestore().collection(`users/${uID}/chorests/`).doc(chorestID).get()
+    if(document.exists){
+        var data = document.data()
+    }
+    else{
+        console.log("ERROR: DOCUMENT DOESN'T EXIST!")
+        throw new functions.https.HttpsError("invalid-argument", "The indicated chorest doesn't exist")
+    }
 
-        // Run methods to calculate shortest route, then update document
-        retrievePlaces(data.chores, data.location_latitude, data.location_longitude)
-        .then(addressList => {
-            console.log('Address List: ' + addressList)
-            var addrList = addressList
-            
-            createGraph(addressList)
-            .then(response =>{
-                start = response[0]
-                graph = response[1]
-                
-                console.log('Graph Start: ' + start)
-                console.log('Graph: ' + graph.toString())
-                
-                var route, totalDist
-                [route, totalDist] = prim(start, graph)
+    // Error checking
+    if(data.chores == null || data.location_latitude == null || data.location_longitude == null){
+        console.log("ERROR: DOCUMENT MISSING PROPERTIES")
+        throw new functions.https.HttpsError("failed-precondition", "The indicated chorest is missing vital properties")
+    }
 
-                console.log('MST: ' + route)
-                console.log('Total Distance: ' + totalDist)
+    // Run methods to calculate shortest route, then update document
+    // Get Addresses of locations to perform chores
+    addressList = await retrievePlaces(data.chores, data.location_latitude, data.location_longitude)    
+    console.log('Address List: ' + addressList)
+    
+    // Receive graph to perform Primm's on
+    graphResponse = await createGraph(addressList)
+    
+    start = graphResponse[0]
+    graph = graphResponse[1]
 
-                // Find routeAddress
-                var routeAddr = []
-                for( const loc of route ){
-                    routeAddr.push( addrList.find(place => place[0] == loc)[1] )
-                }
-                console.log('RouteAddr: ' + routeAddr)
+    console.log('Graph Start: ' + start)
+    console.log('Graph: ' + graph.toString())
+    
+    // Perform Primm's to find MST
+    var route, totalDist
+    [route, totalDist] = prim(start, graph)
 
-                // Then return a promise of a set operation to update the count
-                return change.after.ref.set({
-                    find_new_route: false,  // New route already calculated
-                    route: route,       // Route with place names
-                    route_addresses: routeAddr,   // Route with addresses
-                    route_distance: totalDist    // Total route distance                    
-                }, {merge: true});
+    console.log('MST: ' + route)
+    console.log('Total Distance: ' + totalDist)
 
-            })
-            .catch(error => {
-                console.log(error)
-                return null
-            })
-        })
-        .catch(error => {
-            console.log(error)
-            return null
-        })
-    });
+    // Create list of addresses of route
+    var routeAddr = []
+    for( const loc of route ){
+        routeAddr.push( addressList.find(place => place[0] == loc)[1] )
+    }
+    console.log('RouteAddr: ' + routeAddr)
+
+    dataOutput = {
+        route: route,       // Route with place names
+        route_addresses: routeAddr,   // Route with addresses
+        route_distance: totalDist    // Total route distance
+    }
+
+    // Update values in document
+    updated = await admin.firestore().collection(`users/${uID}/chorests/`).doc(chorestID).update(dataOutput)
+
+    // Then return a promise of a set operation to update the count
+    return dataOutput
+        
+});
 
    
