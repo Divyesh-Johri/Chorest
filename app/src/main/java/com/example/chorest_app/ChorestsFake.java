@@ -1,15 +1,15 @@
 package com.example.chorest_app;
 
-public class ChorestsModel {
+public class ChorestsFake {
 
     private String name;
     //private timestamp timestamp; FieldValue.serverTimestamp()
 
     //Empty constructor for firebase
-    public ChorestsModel() {
+    public ChorestsFake() {
     }
 
-    public ChorestsModel(String name) {
+    public ChorestsFake(String name) {
         this.name = name;
     }
 

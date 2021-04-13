@@ -45,6 +45,7 @@ public class AddChorestActivity extends AppCompatActivity {
     private Button btCalculateMap;
     private EditText etChorestName;
     private RecyclerView rvCalculatedRoutes;
+    private Button btTypeAddress;
     private static final int  RC_TO_MAP  = 23;
 
     private static final String  KEY_CHOREST_NAME = "name";
@@ -66,6 +67,7 @@ public class AddChorestActivity extends AppCompatActivity {
         btCalculateMap = findViewById(R.id.btCalculateMap);
         etChorestName = findViewById((R.id.etChorestName));
         rvCalculatedRoutes = findViewById(R.id.rvCalculatedRoutes);
+        btTypeAddress =  findViewById(R.id.btTypeAddress);
 
 
 
@@ -102,17 +104,24 @@ public class AddChorestActivity extends AppCompatActivity {
             }
         });
 
+        btTypeAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         Query query = db.collection("users").document(currentUser.getUid()).collection("chorests");
 
         //RecyclerOptions
-        FirestoreRecyclerOptions<HomeModel> options = new FirestoreRecyclerOptions.Builder<HomeModel>()
-                .setQuery(query, HomeModel.class)
+        FirestoreRecyclerOptions<Chorest> options = new FirestoreRecyclerOptions.Builder<Chorest>()
+                .setQuery(query, Chorest.class)
                 .build();
 
-        adapter = new FirestoreRecyclerAdapter<HomeModel, AddChorestActivity.AddChorestViewHolder>(options) {
+        adapter = new FirestoreRecyclerAdapter<Chorest, AddChorestActivity.AddChorestViewHolder>(options) {
 
 
 
@@ -124,7 +133,7 @@ public class AddChorestActivity extends AppCompatActivity {
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull AddChorestActivity.AddChorestViewHolder holder, int position, @NonNull HomeModel model) {
+            protected void onBindViewHolder(@NonNull AddChorestActivity.AddChorestViewHolder holder, int position, @NonNull Chorest model) {
                 holder.tvHomeName.setText(model.getName());
 
 
@@ -161,6 +170,8 @@ public class AddChorestActivity extends AppCompatActivity {
                     // Implement Google Maps api
                     break;
         }
+
+
     }
 
     // Go back to the home page

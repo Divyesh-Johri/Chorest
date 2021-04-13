@@ -16,15 +16,15 @@ import java.util.List;
 // Responsible for displaying data from the model into a row in the recycler view
 //public class HomeItemsAdapter extends RecyclerView.Adapter<HomeItemsAdapter.ViewHolder> {
 
-public class HomeItemsAdapter extends FirestoreRecyclerAdapter<HomeModel, HomeItemsAdapter.HomeItemsHolder> {
+public class HomeItemsAdapter extends FirestoreRecyclerAdapter<Chorest, HomeItemsAdapter.HomeItemsHolder> {
 
 
-    public HomeItemsAdapter(@NonNull FirestoreRecyclerOptions<HomeModel> options) {
+    public HomeItemsAdapter(@NonNull FirestoreRecyclerOptions<Chorest> options) {
         super(options);
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull HomeItemsHolder holder, int position, @NonNull HomeModel model) {
+    protected void onBindViewHolder(@NonNull HomeItemsHolder holder, int position, @NonNull Chorest model) {
         holder.tvHomeName.setText(model.getName());
 
     }
