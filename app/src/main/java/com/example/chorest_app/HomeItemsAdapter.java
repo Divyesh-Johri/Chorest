@@ -16,39 +16,45 @@ import java.util.List;
 // Responsible for displaying data from the model into a row in the recycler view
 //public class HomeItemsAdapter extends RecyclerView.Adapter<HomeItemsAdapter.ViewHolder> {
 
-public class HomeItemsAdapter extends FirestoreRecyclerAdapter{
+public class HomeItemsAdapter extends FirestoreRecyclerAdapter<HomeModel, HomeItemsAdapter.HomeItemsHolder> {
 
-    public HomeItemsAdapter(@NonNull FirestoreRecyclerOptions options) {
+
+    public HomeItemsAdapter(@NonNull FirestoreRecyclerOptions<HomeModel> options) {
         super(options);
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position, @NonNull Object model) {
+    protected void onBindViewHolder(@NonNull HomeItemsHolder holder, int position, @NonNull HomeModel model) {
+        holder.tvHomeName.setText(model.getName());
 
     }
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return null;
+    public HomeItemsHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.model_home_list, parent, false);
+
+        return new HomeItemsHolder(v);
     }
 
+    class HomeItemsHolder extends RecyclerView.ViewHolder {
+        TextView tvHomeName;
 
-    class Chorest extends RecyclerView.ViewHolder{
-
-        public Chorest(View itemView){
+        public HomeItemsHolder(View itemView) {
             super(itemView);
+
+            tvHomeName = itemView.findViewById(R.id.tvHomeName);
         }
     }
 
     // To delete a route
-    public interface  OnLongClickListener{
+    public interface OnLongClickListener {
 
         void onItemLongClicked(int position);
     }
 
     // To edit a route
-    public interface  OnClickListener{
+    public interface OnClickListener {
 
         void onItemClicked(int position);
     }
@@ -131,3 +137,75 @@ public class HomeItemsAdapter extends FirestoreRecyclerAdapter{
         }
     }*/
 }
+
+/*
+public class MainActivity extends AppCompatActivity {
+    private FirebaseFirestore  firebaseFirestore;
+    private RecyclerView mFirestoreList;
+
+    private FirestoreRecyclerAdapter adapter;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        firebaseFirestore = FirebaseFirestore.getInstance();
+        mFirestoreList = findViewById(R.id.firestore_list);
+
+        //Query -[6:02]
+        Query query = firebaseFirestore.collection("Products"); //collectionPath
+
+        //RecyclerOptions
+        FirestoreRecyclerOptions<ProductsModel> options = new FirestoreRecyclerOptions.Builder<ProductsModel>()
+                .setQuery(query, ProductsModel.class) //ProductsModel - [6:50] - sub our model class
+                .build();
+
+        adapter = new FirestoreRecyclerAdapter<ProductsModel, ProdcustViewHolder>() { //(name of our view holder in place of ProductsViewHolder - create innerclass(click red thing)) then implement methods after u come to that ...then pass in options[8:01]
+            //after implement methods
+            //onCreateView
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_home, parent, false) //[8:28] attachToRoot
+            //return new ProductsViewHolder(view); //(instead of null)
+
+            //onbindviewholder
+            //holder.list_name.setText(model.getName()); //getName depends on what is stored in ProductModels.java [10:13]
+            //holder.list_price.setText(model.getPrice() + ""); //[10:38]
+
+
+        }
+
+        mFirestoreList.setHasFixedSize(true);
+        mFirestoreList.setLayoutManager(new LinearLayoutManager(this));
+        mFirestoreList.setAdapter(adapter);
+
+    }
+
+
+
+    //private class ProductsViewHolder extends RecyclerView.ViewHolder { //create new constructor - [7:49]
+    //private TextView list_name; //[8:51]
+    //private TextView list_price;
+
+    // public ProductsViewHolder(@NonNull View itemView) {
+    //super(itemView)
+    //}
+    //after this implement methods [7:46]
+
+    list_name = itemview.findViewById(R.id.list_name);
+    list_price = itemview.findViewById(R.id.list_price);
+
+    //onbindview holder under implement methods [9:56]
+}
+
+// protectedvoid onstop // [11:10]
+//super.onstop
+    adapter.stopListening();
+
+            // protected void onstart
+
+            //adapter.startListening();
+
+
+
+
+            }*/

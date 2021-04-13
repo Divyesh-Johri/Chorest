@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.chorest_app.AddChorestActivity;
@@ -22,10 +23,14 @@ import com.example.chorest_app.ChorestsModel;
 //import com.example.chorest_app.ItemsAdapter;
 //import com.example.chorest_app.HomeEditActivity;
 import com.example.chorest_app.HomeItemsAdapter;
+import com.example.chorest_app.HomeModel;
 import com.example.chorest_app.LoginActivity;
 import com.example.chorest_app.R;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
@@ -51,6 +56,8 @@ public class HomeFragment extends Fragment {
     private String mParam2;
 
     private FirebaseFirestore firebaseFirestore;
+    private FirebaseAuth mAuth;
+
     private FloatingActionButton fabAddChorest;
 
     //edit
@@ -60,23 +67,18 @@ public class HomeFragment extends Fragment {
     //edit
 
 
-    List<String> homeItems;
+    //List<String> homeItems;
 
+    //RecyclerView rvMap;
     RecyclerView rvSavedChorests;
-    HomeItemsAdapter homeItemsAdapter;
+    //HomeItemsAdapter homeItemsAdapter;
+    private FirestoreRecyclerAdapter adapter;
 
     public HomeFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment HomeFragment.
-     */
+
     // TODO: Rename and change types and number of parameters
     public static HomeFragment newInstance(String param1, String param2) {
         HomeFragment fragment = new HomeFragment();
@@ -110,10 +112,54 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        firebaseFirestore = FirebaseFirestore.getInstance();
 
         fabAddChorest =  view.findViewById(R.id.fabAddChorest);
         rvSavedChorests = view.findViewById(R.id.rvSavedChorests);
 
+        Query query = firebaseFirestore.collection("users").document(currentUser.getUid()).collection("chorests");
+
+        //RecyclerOptions
+        FirestoreRecyclerOptions<HomeModel> options = new FirestoreRecyclerOptions.Builder<HomeModel>()
+                .setQuery(query, HomeModel.class)
+                .build();
+
+        adapter = new FirestoreRecyclerAdapter<HomeModel, HomeViewHolder>(options) {
+            @NonNull
+            @Override
+            public HomeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.model_home_list, parent, false);
+                return new HomeViewHolder(view);
+            }
+
+            @Override
+            protected void onBindViewHolder(@NonNull HomeViewHolder holder, int position, @NonNull HomeModel model) {
+                holder.tvHomeName.setText(model.getName());
+            }
+
+
+
+        };
+        rvSavedChorests.setHasFixedSize(true);
+        rvSavedChorests.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rvSavedChorests.setAdapter(adapter);
+
+
+        // Floating action button to add a chorest
+        fabAddChorest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToAddChorest();
+            }
+
+
+        });
+
+
+    }
 
         // Firebase code to get items saved there
         //loadItems();
@@ -150,34 +196,41 @@ public class HomeFragment extends Fragment {
 
 
 
+    private class HomeViewHolder extends RecyclerView.ViewHolder {
 
-        // Floating action button to add a chorest
-        fabAddChorest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                goToAddChorest();
-            }
+        private TextView tvHomeName;
 
-
-        });
-
-
-
-
-                //firebaseFirestore = FirebaseFirestore.getInstance();
-        //rvSavedChorests = view.findViewById(R.id.rvSavedChorests);
-
-        // Query to get data from Firestore
-       // Query query = firebaseFirestore.collection("chorests");
-        // can pull in by certain order by ".orderBy(...)
-
-        //RecyclerOptions
-        //FirestoreRecyclerOptions<ChorestsModel> options = new FirestoreRecyclerOptions<>().setQuery(query);
+        public HomeViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tvHomeName = itemView.findViewById(R.id.tvHomeName);
+        }
     }
+
+    @Override
+    public void onStop() {
+
+        super.onStop();
+        adapter.stopListening();
+
+    }
+
+    @Override
+    public void onStart() {
+
+        super.onStart();
+        adapter.startListening();
+
+    }
+
+
+
+
 
     //handle the result of the edit activity
     //@SuppressLint("MissingSuperCall")
-    /*@Override
+
+
+/*@Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (resultCode == RESULT_OK && requestCode == EDIT_TEXT_CODE) {
             //Retrieve the updated text value
@@ -199,6 +252,7 @@ public class HomeFragment extends Fragment {
     }*/
 
 
+
     private void goToAddChorest() {
 
         try {
@@ -215,7 +269,11 @@ public class HomeFragment extends Fragment {
             return;
         }
     }
+
+
 }
+
+
 
 
 /*
@@ -338,4 +396,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 }
+
+
 */
