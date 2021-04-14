@@ -56,7 +56,8 @@ public class Chorest {
     // Chorests collection path
     private static String currentPath = "users/" + uID + "/chorests/";
 
-
+    // Empty constructor for Firebase
+    private Chorest(){}
 
     // Define information for existing Chorest
     // Used by getAllUserChorests

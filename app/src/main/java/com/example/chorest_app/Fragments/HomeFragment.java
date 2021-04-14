@@ -19,7 +19,7 @@ import android.widget.Toast;
 import com.example.chorest_app.AddChorestActivity;
 //import com.example.chorest_app.ItemsAdapter;
 //import com.example.chorest_app.HomeEditActivity;
-import com.example.chorest_app.HomeModel;
+import com.example.chorest_app.Chorest;
 import com.example.chorest_app.R;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -113,13 +113,17 @@ public class HomeFragment extends Fragment {
         Query query = firebaseFirestore.collection("users").document(currentUser.getUid()).collection("chorests");
 
         //RecyclerOptions
-        FirestoreRecyclerOptions<HomeModel> options = new FirestoreRecyclerOptions.Builder<HomeModel>()
-                .setQuery(query, HomeModel.class)
+        FirestoreRecyclerOptions<Chorest> options = new FirestoreRecyclerOptions.Builder<Chorest>()
+                .setQuery(query, Chorest.class)
                 .build();
 
-        adapter = new FirestoreRecyclerAdapter<HomeModel, HomeViewHolder>(options) {
+        adapter = new FirestoreRecyclerAdapter<Chorest, HomeViewHolder>(options) {
 
 
+            @Override
+            protected void onBindViewHolder(@NonNull HomeViewHolder holder, int position, @NonNull Chorest model) {
+                holder.tvHomeName.setText(model.getName());
+            }
 
             @NonNull
             @Override
@@ -128,17 +132,6 @@ public class HomeFragment extends Fragment {
                 //view.setOnLongClickListener();
                 return new HomeViewHolder(view);
             }
-
-            @Override
-            protected void onBindViewHolder(@NonNull HomeViewHolder holder, int position, @NonNull HomeModel model) {
-                holder.tvHomeName.setText(model.getName());
-
-
-                /*holder.ViewHolder.setOnClickListener(new HomeViewHolder.Clicklistener()){
-
-                }*/
-            }
-
 
 
         };
@@ -362,126 +355,3 @@ public class HomeFragment extends Fragment {
 
 
 
-/*
-public class MainActivity extends AppCompatActivity {
-
-    //edit
-    public static final String KEY_ITEM_TEXT = "item_text";
-    public static final String KEY_ITEM_POSITION = "item_position";
-    public static final int EDIT_TEXT_CODE = 20;
-    //edit
-
-    List<String> items;
-
-    Button btnAdd;
-    EditText etItem;
-    RecyclerView rvItems;
-    ItemsAdapter itemsAdapter;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        btnAdd = findViewById(R.id.btnAdd);
-        etItem = findViewById(R.id.etItem);
-        rvItems = findViewById(R.id.rvItems);
-
-        loadItems();
-
-        ItemsAdapter.OnLongClickListener OnLongClickListener = new ItemsAdapter.OnLongClickListener() {
-            @Override
-            public void onItemLongClicked(int position) {
-                // Delete the item from the model
-                items.remove(position);
-                //Notify the adapter
-                itemsAdapter.notifyItemRemoved(position);
-                Toast.makeText(getApplicationContext(), "Item was removed ", Toast.LENGTH_SHORT).show(); //Chore was deleted
-                saveItems();
-
-            }
-        };
-        //edit
-        ItemsAdapter.OnClickListener onClickListener = new ItemsAdapter.OnClickListener() {
-            @Override
-            public void onItemClicked(int position) {
-                //create the new activity
-                Intent i = new Intent(MainActivity.this, EditActivity.class);
-                //pass the data being edited
-                i.putExtra(KEY_ITEM_TEXT,items.get(position));
-                i.putExtra(KEY_ITEM_POSITION,position);
-                //display the activity
-                startActivityForResult(i, EDIT_TEXT_CODE);
-            }
-        };
-        //edit
-        itemsAdapter = new ItemsAdapter(items, OnLongClickListener, onClickListener); //edit onClickListener
-        rvItems.setAdapter(itemsAdapter);
-        rvItems.setLayoutManager(new LinearLayoutManager(this));
-
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String todoItem = etItem.getText().toString();
-                // Add item to the model
-                items.add(todoItem);
-                // Notify adapter that an item is inserted
-                itemsAdapter.notifyItemInserted(items.size() - 1);
-                etItem.setText("");
-                Toast.makeText(getApplicationContext(), "Item was added", Toast.LENGTH_SHORT).show();
-                saveItems();
-            }
-        });
-
-    }
-
-    //handle the result of the edit activity
-    @SuppressLint("MissingSuperCall")
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (resultCode == RESULT_OK && requestCode == EDIT_TEXT_CODE) {
-            //Retrieve the updated text value
-            String itemText = data.getStringExtra(KEY_ITEM_TEXT);
-            //extract the original position of the  edited item from the position key
-            int position = data.getExtras().getInt(KEY_ITEM_POSITION);
-
-            //update the model with the new item
-            items.set(position, itemText)
-            //notify the adapter
-            itemsAdapter.notifyItemChanged(position);
-            //persist changes
-            saveItems();
-            Toast.makeText(getApplicationContext(), "Chorest updated successfully!", Toast.LENGTH_SHORT).show();
-
-        } else {
-            Log.w("MainActivity", "Unknown call to onActivityResult");
-        }
-    }
-
-    //Persistence
-    private File getDataFile() {
-
-        return new File(getFilesDir(),"data.txt");
-    }
-
-    // This function will load items by reading every line of the data file
-    private void loadItems() {
-        try {
-            items = new ArrayList<>(FileUtils.readLines(getDataFile(), Charset.defaultCharset()));
-        } catch (IOException e) {
-            Log.e("MainActivity", "Error reading items",e);
-            items = new ArrayList<>();
-        }
-    }
-    // This function saves items by writing them into the data file
-    private void saveItems() {
-        try {
-            FileUtils.writeLines(getDataFile(), items);
-        } catch (IOException e) {
-            Log.e("MainActivity", "Error writing items",e);
-        }
-    }
-}
-
-
-*/

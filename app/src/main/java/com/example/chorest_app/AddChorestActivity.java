@@ -1,10 +1,7 @@
 package com.example.chorest_app;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,8 +18,6 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.chorest_app.Fragments.HomeFragment;
-import com.example.chorest_app.Fragments.MapFragment;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -128,50 +123,19 @@ public class AddChorestActivity extends AppCompatActivity {
             @NonNull
             @Override
             public AddChorestActivity.AddChorestViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.model_home_list, parent, false);
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.model_add_chorest_routes, parent, false);
                 return new AddChorestActivity.AddChorestViewHolder(view);
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull AddChorestActivity.AddChorestViewHolder holder, int position, @NonNull Chorest model) {
-                holder.tvHomeName.setText(model.getName());
-
-
-                /*holder.ViewHolder.setOnClickListener(new HomeViewHolder.Clicklistener()){
-
-                }*/
+            protected void onBindViewHolder(@NonNull AddChorestViewHolder holder, int position, @NonNull Chorest model) {
+                holder.tvRouteName.setText(model.getName());
             }
-
-
-
         };
+
         rvCalculatedRoutes.setHasFixedSize(true);
         rvCalculatedRoutes.setLayoutManager(new LinearLayoutManager(this));
         rvCalculatedRoutes.setAdapter(adapter);
-
-
-    }
-
-    public void onRadioButtonClicked(View view){
-        boolean checked = ((RadioButton) view).isChecked();
-
-        switch (view.getId()){
-            case R.id.rbCurrentLocation:
-                if(checked)
-                    Toast.makeText(AddChorestActivity.this, "Current Location", Toast.LENGTH_SHORT).show();
-                    // Implement GPS location feature
-                    // Address text view is greyed out
-                    break;
-
-            case R.id.rbChooseLocation:
-                if(checked)
-                    Toast.makeText(AddChorestActivity.this, "Choose A Location", Toast.LENGTH_SHORT).show();
-                    // Address text view can be used
-                    // Implement Google Maps api
-                    break;
-        }
-
-
     }
 
     // Go back to the home page
@@ -195,14 +159,14 @@ public class AddChorestActivity extends AppCompatActivity {
 
     }
 
+
     private class AddChorestViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView tvHomeName;
+        private TextView tvRouteName;
 
         public AddChorestViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvHomeName = itemView.findViewById(R.id.tvHomeName);
-
+            tvRouteName = itemView.findViewById(R.id.tvRouteName);
         }
     }
 }
