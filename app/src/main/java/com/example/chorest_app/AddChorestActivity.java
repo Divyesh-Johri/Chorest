@@ -93,7 +93,7 @@ public class AddChorestActivity<True> extends AppCompatActivity {
         btAddLocations = findViewById(R.id.btAddLocations);
 
         //Location
-        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE); //fine location - gps
+//        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE); //fine location - gps
 //        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 //            // TODO: Consider calling
 //            //    ActivityCompat#requestPermissions
@@ -114,40 +114,40 @@ public class AddChorestActivity<True> extends AppCompatActivity {
 //        }
 
 
-        final LocationListener locationListener = new LocationListener() {
-            public void onLocationChanged(Location location) {
-                longitude = location.getLongitude();
-                latitude = location.getLatitude();
-            }
-
-            @Override
-            public void onStatusChanged(String s, int i, Bundle bundle) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String s) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String s) {
-                longitude = -77.859909;
-                latitude = 40.8148;
-            }
-        };
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            ActivityCompat.(requestPermissions);
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListener);
+//        final LocationListener locationListener = new LocationListener() {
+//            public void onLocationChanged(Location location) {
+//                longitude = location.getLongitude();
+//                latitude = location.getLatitude();
+//            }
+//
+//            @Override
+//            public void onStatusChanged(String s, int i, Bundle bundle) {
+//
+//            }
+//
+//            @Override
+//            public void onProviderEnabled(String s) {
+//
+//            }
+//
+//            @Override
+//            public void onProviderDisabled(String s) {
+//                longitude = -77.859909;
+//                latitude = 40.8148;
+//            }
+//        };
+//
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            // TODO: Consider calling
+//            ActivityCompat.(requestPermissions);
+//            // here to request the missing permissions, and then overriding
+//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//            //                                          int[] grantResults)
+//            // to handle the case where the user grants the permission. See the documentation
+//            // for ActivityCompat#requestPermissions for more details.
+//            return;
+//        }
+//        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListener);
 
 
 
@@ -184,28 +184,28 @@ public class AddChorestActivity<True> extends AppCompatActivity {
             }
         });
 
-        btTypeAddress.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
-        btAddLocations.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-
-        private final LocationListener locationListener = new LocationListener() {
-            public void onLocationChanged(Location location) {
-                longitude = location.getLongitude();
-                latitude = location.getLatitude();
-            }
-        }
-
-        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListener);
+//        btTypeAddress.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//            }
+//        });
+//
+//        btAddLocations.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//            }
+//        });
+//
+//        private final LocationListener locationListener = new LocationListener() {
+//            public void onLocationChanged(Location location) {
+//                longitude = location.getLongitude();
+//                latitude = location.getLatitude();
+//            }
+//        }
+//
+//        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListener);
 
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -248,6 +248,7 @@ public class AddChorestActivity<True> extends AppCompatActivity {
 
     }
 
+    //Location
     protected void startLocationUpdates() {
         // Create the location request to start receiving updates
         mLocationRequest = new LocationRequest();
