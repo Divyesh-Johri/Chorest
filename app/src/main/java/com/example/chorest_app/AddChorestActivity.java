@@ -72,7 +72,6 @@ public class AddChorestActivity extends AppCompatActivity {
 
     // Retrieve current location of user
     private FusedLocationProviderClient fusedLocationClient;
-    private LocationCallback locationCallback;
     private int locationRequestCode = 1000;
     private double longitude;
     private double latitude;
@@ -252,7 +251,6 @@ public class AddChorestActivity extends AppCompatActivity {
     // Go back to the home page
     private void goToMain(){
 
-
         try {
             Log.d(TAG, "Successfully signed out");
             //Toast.makeText(this, "Successfully saved chorest", Toast.LENGTH_SHORT).show();
@@ -266,7 +264,6 @@ public class AddChorestActivity extends AppCompatActivity {
             Toast.makeText(this, "Failed to save chorest", Toast.LENGTH_SHORT).show();
             return;
         }
-
 
     }
 

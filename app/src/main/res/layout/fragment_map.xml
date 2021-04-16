@@ -14,12 +14,21 @@
             android:id="@+id/spMapDropDown"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10sp"
+            android:layout_marginTop="50sp"
+            android:layout_marginRight="10sp"
             android:background="@android:drawable/btn_dropdown"
             android:paddingTop="32dp" />
 
-        <com.google.android.gms.maps.MapView
-            android:id="@+id/mvChorestMap"
+        <Button
+            android:id="@+id/btMaps"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50sp"
+            android:layout_marginTop="200sp"
+            android:layout_marginRight="50sp"
+            android:text="See In Maps" />
+
+
     </LinearLayout>
 </FrameLayout>

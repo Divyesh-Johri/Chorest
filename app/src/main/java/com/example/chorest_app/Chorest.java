@@ -192,7 +192,7 @@ public class Chorest {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            Log.d(TAG, "getAllUserChorestsDBCall - Query successful");
+                            Log.d(TAG, "getAllUserChorests - Query successful");
                             ArrayList<Chorest> allUserChorests = new ArrayList<>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.d(TAG, "getAllUserChorests - " + document.getId() + " => " + document.getData());
@@ -226,9 +226,10 @@ public class Chorest {
                                 }
                             }
                             // After for loop, send data to callback
+                            Log.i(TAG, "getAllUserChorests - Size of returned array: " + allUserChorests.size());
                             userChorestsCallback.onCallback(allUserChorests);
                         } else {
-                            Log.d(TAG, "getAllUserChorestsDBCall - Error getting documents: ", task.getException());
+                            Log.d(TAG, "getAllUserChorests - Error getting documents: ", task.getException());
                         }
                     }
                 });
