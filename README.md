@@ -30,18 +30,9 @@ Chorest is an app that allows users to find the shortest route between locations
 * [x] User can view maps (Maps page)
 * [x] User can add a chorest (Home + Chorest Page)
 * User can edit and delete a chorest (Home + Chorest Page)
-* User can navigate to maps page with selected route (Chorest page)
-* User can view new unoptimal routes and go back to old ones (Add chorest page)
-* User can view a calculated shortest route of a chorest (Add chorest page)
-* User can view map with chorests (Map page)
-* User can see toasts for screen transitions/ items saved etc (General)
-
-**Optional Nice-to-have Stories**
-
-* User can favorite chorests for use offline
-* User can obtain routes that account for traffic
-* User can utilize speech-to-text for chores
-* User can share chorests (through text or email) 
+* [x] User can view a calculated shortest route of a chorest (Add chorest page)
+* [x] User can view map with chorests (Map page)
+* [x] User can see toasts for screen transitions/ items saved etc (General)
 
 <img src = "https://github.com/Divyesh-Johri/Chorest/blob/main/Chorest3.gif" width=250><br>
 Gif Link: https://github.com/Divyesh-Johri/Chorest/blob/main/Chorest3.gif
@@ -49,6 +40,9 @@ Gif Link: https://github.com/Divyesh-Johri/Chorest/blob/main/Chorest3.gif
 
 <img src = "https://github.com/Divyesh-Johri/Chorest/blob/main/Chorest4.gif" width=250><br>
 Gif Link: https://github.com/Divyesh-Johri/Chorest/blob/main/Chorest4.gif
+
+<img src = "https://github.com/Divyesh-Johri/Chorest/blob/main/Chorest5.gif" width=250><br>
+Gif Link: https://github.com/Divyesh-Johri/Chorest/blob/main/Chorest5.gif
 
 ### 2. Screen Archetypes
 
