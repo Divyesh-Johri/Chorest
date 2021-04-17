@@ -110,7 +110,7 @@ public class HomeFragment extends Fragment {
         fabAddChorest =  view.findViewById(R.id.fabAddChorest);
         rvSavedChorests = view.findViewById(R.id.rvSavedChorests);
 
-        Query query = firebaseFirestore.collection("users").document(currentUser.getUid()).collection("chorests");
+        Query query = firebaseFirestore.collection("users").document(currentUser.getUid()).collection("chorests").whereNotEqualTo("name", "dummy");
 
         //RecyclerOptions
         FirestoreRecyclerOptions<Chorest> options = new FirestoreRecyclerOptions.Builder<Chorest>()
