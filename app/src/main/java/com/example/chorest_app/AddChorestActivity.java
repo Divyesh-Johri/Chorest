@@ -119,8 +119,7 @@ public class AddChorestActivity extends AppCompatActivity {
         btAddLocations = findViewById(R.id.btAddLocations);
         etAddLocations = findViewById(R.id.etAddLocations);
 
-        //ArrayList<AddChorestChoresListModel> choreslist = new ArrayList<AddChorestChoresListModel>();
-        //ArrayList<String> choreslist4Chorest = new ArrayList<String>();
+
         ArrayList<String> choreslist;
         ArrayList<String> routeslist;
 
@@ -132,7 +131,19 @@ public class AddChorestActivity extends AppCompatActivity {
         choreslist.add("Gym");
         choreslist.add("pizza");
 
-        AddChorestChoresListAdapter choresAdapter = new AddChorestChoresListAdapter(choreslist);
+        AddChorestChoresListAdapter.OnLongClickListener onLongClickListener = new AddChorestChoresListAdapter.OnLongClickListener() {
+            @Override
+            public void onItemLongClicked(int positon) {
+
+                choreslist.remove(positon);
+                choresAdapter.notifyItemRemoved(positon);
+
+                Toast.makeText(AddChorestActivity.this, "Chore Removed", Toast.LENGTH_SHORT).show();
+
+            }
+        };
+
+        choresAdapter = new AddChorestChoresListAdapter(choreslist, onLongClickListener);
         rvAddLocations.setAdapter(choresAdapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         rvAddLocations.setLayoutManager(linearLayoutManager);
@@ -259,6 +270,8 @@ public class AddChorestActivity extends AppCompatActivity {
                 // Get calculated route as an array
 
                 // Put array in 2nd recyclerview
+
+                // Make sure array is cleared when going back to add activity
 
             }
         });

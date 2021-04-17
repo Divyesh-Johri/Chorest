@@ -13,16 +13,21 @@ import java.util.List;
 
 public class AddChorestChoresListAdapter extends RecyclerView.Adapter<AddChorestChoresListAdapter.AddChorestViewHolder> {
 
-    private ArrayList<String> choreList;
 
-    public AddChorestChoresListAdapter(ArrayList<String> choreList) {
-        this.choreList = choreList;
+    // Chores list public interface to delete a chore
+    public interface OnLongClickListener{
+        void onItemLongClicked(int positon);
     }
 
-   /* public void setData(ArrayList<String> list){
-        this.choreList = list;
-        //notifyDataSetChanged();
-    }*/
+    private ArrayList<String> choreList;
+    private OnLongClickListener longClickListener;
+
+    public AddChorestChoresListAdapter(ArrayList<String> choreList, OnLongClickListener longClickListener) {
+        this.choreList = choreList;
+        this.longClickListener = longClickListener;
+    }
+
+
 
     @NonNull
     @Override
@@ -66,6 +71,16 @@ public class AddChorestChoresListAdapter extends RecyclerView.Adapter<AddChorest
 
         public void bind(String chore) {
             tvChore.setText(chore);
+
+            // Notify listener of position of chore to be deleted
+            tvChore.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+
+                    longClickListener.onItemLongClicked(getAdapterPosition());
+                    return true;
+                }
+            });
 
         }
     }
