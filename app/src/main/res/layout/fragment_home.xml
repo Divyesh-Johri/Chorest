@@ -4,8 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.HomeFragment"
-    android:layout_above="@+id/bottomNavigation">
+    android:layout_above="@+id/bottomNavigation"
+    android:background="#212121"
+    tools:context=".Fragments.HomeFragment">
 
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -15,9 +16,11 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvSavedChorests"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="140dp"
+            android:layout_height="352dp"
+            android:layout_marginTop="160dp"
             android:layout_marginBottom="0dp"
+            android:background="#9FA8DA"
+            android:backgroundTint="#9FA8DA"
             android:paddingLeft="10dp"
             android:paddingTop="10dp"
             android:paddingRight="10dp"
@@ -54,6 +57,7 @@
                 android:layout_marginTop="32dp"
                 android:editable="false"
                 android:text="Add a Chorest!"
+                android:textColor="@color/white"
                 android:textSize="30sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -69,6 +73,7 @@
                 android:layout_marginTop="32dp"
                 android:editable="false"
                 android:text="Your Chorests:"
+                android:textColor="@color/white"
                 android:textSize="18sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvHomeLabel" />
@@ -78,7 +83,6 @@
 
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
 
 
 </FrameLayout>

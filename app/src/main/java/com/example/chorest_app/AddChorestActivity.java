@@ -19,6 +19,8 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Looper;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -82,6 +84,7 @@ public class AddChorestActivity extends AppCompatActivity {
     private static int AUTOCOMPLETE_REQUEST_CODE = 1;
     private Button btAddLocations;
 
+    private Chorest chorest;
     private static final String KEY_CHOREST_NAME = "name";
 
     private FirebaseAuth mAuth;
@@ -131,6 +134,7 @@ public class AddChorestActivity extends AppCompatActivity {
         choreslist.add("Gym");
         choreslist.add("pizza");
 
+        // Delete a chore
         AddChorestChoresListAdapter.OnLongClickListener onLongClickListener = new AddChorestChoresListAdapter.OnLongClickListener() {
             @Override
             public void onItemLongClicked(int positon) {
@@ -165,9 +169,6 @@ public class AddChorestActivity extends AppCompatActivity {
 
 
 
-
-
-
         // Initialize the SDK for places api
         Places.initialize(getApplicationContext(), getResources().getString(R.string.places_key));
 
@@ -193,6 +194,7 @@ public class AddChorestActivity extends AppCompatActivity {
         }
 
 
+        // Save all changes and return user to home fragment
         // Save the chorest info to firebase
         btCalculateMap.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -248,6 +250,28 @@ public class AddChorestActivity extends AppCompatActivity {
             }
         });
 
+        // Force users to name their chorests by disabling the submit button
+        etChorestName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                String chorestNameInput = etChorestName.getText().toString().trim();
+
+                btSubmitList.setEnabled(!chorestNameInput.isEmpty());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
         // Save info to Chorest Object and show the calculated route
         btSubmitList.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -261,6 +285,42 @@ public class AddChorestActivity extends AppCompatActivity {
                     public void onCallback(Chorest newChorest) {
 
                         Log.i(TAG, "New Chorest created: " + newChorest.getName() + newChorest.getLocLat()+ newChorest.getLocLong() + newChorest.getId() + newChorest.getRoute());
+
+                        newChorest.findNewRoute(new Chorest.FindRouteCallback() {
+                            @Override
+                            public void onCallback(Boolean hasUpdated) {
+                                ArrayList<String> routes = newChorest.getRoute();
+
+                                try{
+                                    for( int i = 0; i < routes.size(); i++){
+                                        // Put array in 2nd recyclerview  (rvCalculatedRoutes)
+                                        routeslist.add(routes.get(i));
+                                    }
+                                }
+                                catch ( java.lang.NullPointerException e){
+                                    Log.w(TAG, "Failed to produce routes", e);
+                                    Toast.makeText(AddChorestActivity.this, "Failed to get routes", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+
+
+                            }
+                        });
+                        /*// Get calculated route as an arraylist
+                        ArrayList<String> routes = newChorest.getRoute();
+
+                        try{
+                            for( int i = 0; i < routes.size(); i++){
+                                // Put array in 2nd recyclerview  (rvCalculatedRoutes)
+                                routeslist.add(routes.get(i));
+                            }
+                        }
+                        catch ( java.lang.NullPointerException e){
+                            Log.w(TAG, "Failed to produce routes", e);
+                            Toast.makeText(AddChorestActivity.this, "Failed to get routes", Toast.LENGTH_SHORT).show();
+                            return;
+                        }*/
+
                     }
 
                 });

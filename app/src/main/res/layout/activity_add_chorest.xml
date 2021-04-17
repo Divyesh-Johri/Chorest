@@ -11,6 +11,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#212121"
         android:isScrollContainer="false"
         tools:context=".AddChorestActivity">
 
@@ -21,8 +22,10 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="20dp"
+            android:backgroundTint="#651FFF"
             android:enabled="false"
             android:text="Add"
+            android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/etTypeAddress"
             app:layout_constraintTop_toBottomOf="@+id/rgLocation" />
 
@@ -33,7 +36,9 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="32dp"
             android:text="Choose your starting location:"
+            android:textColor="@color/white"
             android:textSize="18sp"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -42,6 +47,8 @@
             android:layout_width="324dp"
             android:layout_height="167dp"
             android:layout_marginTop="16dp"
+            android:background="#9FA8DA"
+            android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.367"
             app:layout_constraintStart_toStartOf="parent"
@@ -52,6 +59,8 @@
             android:layout_width="324dp"
             android:layout_height="167dp"
             android:layout_marginTop="24dp"
+            android:background="#9FA8DA"
+            android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.367"
             app:layout_constraintStart_toStartOf="parent"
@@ -62,44 +71,52 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="26dp"
+            android:layout_marginTop="25dp"
             android:text="Calculated Route:"
+            android:textColor="@color/white"
             android:textSize="18sp"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btSubmitList" />
+            app:layout_constraintTop_toBottomOf="@+id/divider2" />
 
         <Button
             android:id="@+id/btSubmitList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
+            android:layout_marginTop="35dp"
+            android:backgroundTint="#651FFF"
+            android:enabled="false"
             android:text="Submit"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.462"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rvAddLocations" />
+            app:layout_constraintTop_toBottomOf="@+id/etChorestName" />
 
         <Button
             android:id="@+id/btCalculateMap"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
+            android:backgroundTint="#651FFF"
             android:text="Save Route"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.454"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/etChorestName" />
+            app:layout_constraintTop_toBottomOf="@+id/rvCalculatedRoutes" />
 
         <TextView
             android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="30dp"
             android:text="Add destinations:"
+            android:textColor="@color/white"
             android:textSize="18sp"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/etTypeAddress" />
+            app:layout_constraintTop_toBottomOf="@+id/divider" />
 
         <RadioGroup
             android:id="@+id/rgLocation"
@@ -113,6 +130,7 @@
 
             <RadioButton
                 android:id="@+id/rbCurrentLocation"
+                android:textColor="@color/white"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -127,6 +145,7 @@
 
             <RadioButton
                 android:id="@+id/rbChooseLocation"
+                android:textColor="@color/white"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -142,6 +161,8 @@
 
         <EditText
             android:id="@+id/etAddLocations"
+            android:textColorHint="@color/white"
+            android:textColor="@color/white"
             android:layout_width="229dp"
             android:layout_height="42dp"
             android:layout_marginStart="32dp"
@@ -159,7 +180,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:backgroundTint="#651FFF"
             android:text="Add"
+            android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/etAddLocations"
             app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
@@ -173,12 +196,16 @@
             android:enabled="false"
             android:hint="Street Address"
             android:inputType="textPostalAddress"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white"
             android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/rgLocation" />
 
         <EditText
             android:id="@+id/etChorestName"
+            android:textColorHint="@color/white"
+            android:textColor="@color/white"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="28dp"
@@ -194,11 +221,42 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="15dp"
             android:text="Name of Chorest:"
+            android:textColor="@color/white"
             android:textSize="18sp"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rvCalculatedRoutes" />
+            app:layout_constraintTop_toBottomOf="@+id/divider4" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="30dp"
+            android:background="?android:attr/listDivider"
+            android:backgroundTint="@color/white"
+            app:layout_constraintTop_toBottomOf="@+id/etTypeAddress"
+            tools:layout_editor_absoluteX="1dp" />
+
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="25dp"
+            android:background="?android:attr/listDivider"
+            android:backgroundTint="@color/white"
+            app:layout_constraintTop_toBottomOf="@+id/btSubmitList" />
+
+        <View
+            android:id="@+id/divider4"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="25dp"
+            android:background="?android:attr/listDivider"
+            android:backgroundTint="@color/white"
+            app:layout_constraintTop_toBottomOf="@+id/rvAddLocations"
+            tools:layout_editor_absoluteX="1dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
