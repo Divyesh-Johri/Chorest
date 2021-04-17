@@ -344,7 +344,6 @@ public class Chorest {
 
                         route = (ArrayList<String>) result.get("route");
                         route_addresses = (ArrayList<String>) result.get("route_addresses");
-                        route_distance = (Long) result.get("route_distance");
 
                         return "result";
                     }
@@ -438,9 +437,5 @@ public class Chorest {
 
     public ArrayList<String> getRoute_addresses() {
         return route_addresses;
-    }
-
-    public long getRoute_distance() {
-        return route_distance;
     }
 }

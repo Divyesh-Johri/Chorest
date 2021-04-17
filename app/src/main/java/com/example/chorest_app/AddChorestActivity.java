@@ -199,32 +199,8 @@ public class AddChorestActivity extends AppCompatActivity {
         btCalculateMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FirebaseUser currentUser = mAuth.getCurrentUser();
-
-                String name = etChorestName.getText().toString();
-
-                Map<String, Object> chorestRoute = new HashMap<>();
-                chorestRoute.put(KEY_CHOREST_NAME, name);
-
-                db.collection("users").document(currentUser.getUid()).collection("chorests")
-                        .add(chorestRoute)
-                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                            @Override
-                            public void onSuccess(DocumentReference documentReference) {
-                                Log.d(TAG, "onSuccess: Added new chorests");
-                                Toast.makeText(AddChorestActivity.this, "Chorests Route Saved", Toast.LENGTH_SHORT).show();
-                                goToMain();
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.d(TAG, "onFailure: Failed to add chorests");
-                                Toast.makeText(AddChorestActivity.this, "Chorests Route Failed to Save", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-
-
+                Toast.makeText(AddChorestActivity.this, "Chorests Route Saved", Toast.LENGTH_SHORT).show();
+                goToMain();
             }
         });
 
@@ -279,51 +255,77 @@ public class AddChorestActivity extends AppCompatActivity {
 
                 String name = etChorestName.getText().toString();
 
-                // Create new chorest object from user input
-                Chorest.createChorest(name, latitude, longitude, choreslist, new Chorest.CreateChorestCallback() {
-                    @Override
-                    public void onCallback(Chorest newChorest) {
+                if(chorest != null){
 
-                        Log.i(TAG, "New Chorest created: " + newChorest.getName() + newChorest.getLocLat()+ newChorest.getLocLong() + newChorest.getId() + newChorest.getRoute());
+                    // Set chorest stuff
+                    chorest.setChores(choreslist);
+                    chorest.setName(name);
+                    chorest.setLocation(latitude, longitude);
 
-                        newChorest.findNewRoute(new Chorest.FindRouteCallback() {
-                            @Override
-                            public void onCallback(Boolean hasUpdated) {
-                                ArrayList<String> routes = newChorest.getRoute();
+                    // Update chorest object from user input
+                    chorest.updateChorest(new Chorest.UpdateChorestCallback() {
+                        @Override
+                        public void onCallback(Boolean hasUpdated) {
+                            chorest.findNewRoute(new Chorest.FindRouteCallback() {
+                                @Override
+                                public void onCallback(Boolean hasUpdated) {
+                                    ArrayList<String> routes = chorest.getRoute();
 
-                                try{
-                                    for( int i = 0; i < routes.size(); i++){
-                                        // Put array in 2nd recyclerview  (rvCalculatedRoutes)
-                                        routeslist.add(routes.get(i));
+                                    try{
+                                        routeslist.clear();
+                                        for( int i = 0; i < routes.size(); i++){
+                                            // Put array in 2nd recyclerview  (rvCalculatedRoutes)
+                                            routeslist.add(routes.get(i));
+                                        }
                                     }
+                                    catch ( java.lang.NullPointerException e){
+                                        Log.w(TAG, "Failed to produce routes", e);
+                                        Toast.makeText(AddChorestActivity.this, "Failed to get routes", Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+
+
                                 }
-                                catch ( java.lang.NullPointerException e){
-                                    Log.w(TAG, "Failed to produce routes", e);
-                                    Toast.makeText(AddChorestActivity.this, "Failed to get routes", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-
-
-                            }
-                        });
-                        /*// Get calculated route as an arraylist
-                        ArrayList<String> routes = newChorest.getRoute();
-
-                        try{
-                            for( int i = 0; i < routes.size(); i++){
-                                // Put array in 2nd recyclerview  (rvCalculatedRoutes)
-                                routeslist.add(routes.get(i));
-                            }
+                            });
                         }
-                        catch ( java.lang.NullPointerException e){
-                            Log.w(TAG, "Failed to produce routes", e);
-                            Toast.makeText(AddChorestActivity.this, "Failed to get routes", Toast.LENGTH_SHORT).show();
-                            return;
-                        }*/
+                    });
 
-                    }
+                } else {
+                    // Create new chorest object from user input
+                    Chorest.createChorest(name, latitude, longitude, choreslist, new Chorest.CreateChorestCallback() {
+                        @Override
+                        public void onCallback(Chorest newChorest) {
 
-                });
+                            Log.i(TAG, "New Chorest created: " + newChorest.getName() + newChorest.getLocLat()+ newChorest.getLocLong() + newChorest.getId() + newChorest.getRoute());
+                            chorest = newChorest;
+
+                            newChorest.findNewRoute(new Chorest.FindRouteCallback() {
+                                @Override
+                                public void onCallback(Boolean hasUpdated) {
+                                    ArrayList<String> routes = newChorest.getRoute();
+
+                                    try{
+                                        routeslist.clear();
+                                        for( int i = 0; i < routes.size(); i++){
+                                            // Put array in 2nd recyclerview  (rvCalculatedRoutes)
+                                            routeslist.add(routes.get(i));
+                                        }
+                                    }
+                                    catch ( java.lang.NullPointerException e){
+                                        Log.w(TAG, "Failed to produce routes", e);
+                                        Toast.makeText(AddChorestActivity.this, "Failed to get routes", Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+
+
+                                }
+                            });
+                        }
+
+                    });
+                }
+
+
 
                 //Chorest cho = new Chorest.createChorest();
 
