@@ -34,6 +34,7 @@ import com.example.chorest_app.Fragments.HomeFragment;
 import com.example.chorest_app.Fragments.MapFragment;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationServices;
@@ -41,14 +42,25 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
@@ -62,13 +74,20 @@ public class AddChorestActivity extends AppCompatActivity {
     private EditText etChorestName;
     private RecyclerView rvCalculatedRoutes;
     private Button btTypeAddress;
+    private Button btSubmitList;
+    private EditText etAddLocations;
+    private RecyclerView rvAddLocations;
+    private EditText etTypeAddress;
     private static final int RC_TO_MAP = 23;
+    private static int AUTOCOMPLETE_REQUEST_CODE = 1;
+    private Button btAddLocations;
 
     private static final String KEY_CHOREST_NAME = "name";
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private FirestoreRecyclerAdapter adapter;
+    private AddChorestAdapter routesAdapter;
+    private AddChorestChoresListAdapter choresAdapter;
 
     // Retrieve current location of user
     private FusedLocationProviderClient fusedLocationClient;
@@ -85,6 +104,7 @@ public class AddChorestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_chorest);
 
+
         mAuth = FirebaseAuth.getInstance();
         rgLocation = findViewById(R.id.rgLocation);
         rbCurrentLocation = findViewById(R.id.rbCurrentLocation);
@@ -93,8 +113,58 @@ public class AddChorestActivity extends AppCompatActivity {
         etChorestName = findViewById((R.id.etChorestName));
         rvCalculatedRoutes = findViewById(R.id.rvCalculatedRoutes);
         btTypeAddress = findViewById(R.id.btTypeAddress);
+        btSubmitList = findViewById(R.id.btSubmitList);
+        rvAddLocations = findViewById(R.id.rvAddLocations);
+        etTypeAddress = findViewById(R.id.etTypeAddress);
+        btAddLocations = findViewById(R.id.btAddLocations);
+        etAddLocations = findViewById(R.id.etAddLocations);
+
+        //ArrayList<AddChorestChoresListModel> choreslist = new ArrayList<AddChorestChoresListModel>();
+        //ArrayList<String> choreslist4Chorest = new ArrayList<String>();
+        ArrayList<String> choreslist;
+        ArrayList<String> routeslist;
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        // Set up chores list recycler view (rvAddLocations)
+        choreslist = new ArrayList<>();
+        choreslist.add("Groceries");
+        choreslist.add("Gym");
+        choreslist.add("pizza");
+
+        AddChorestChoresListAdapter choresAdapter = new AddChorestChoresListAdapter(choreslist);
+        rvAddLocations.setAdapter(choresAdapter);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        rvAddLocations.setLayoutManager(linearLayoutManager);
+
+
+        // Set up routes list recycler view (rvCalculatedRoutes)
+        routeslist = new ArrayList<>();
+        routeslist.add("Snacks");
+        routeslist.add("Music");
+        routeslist.add("Socks");
+
+        AddChorestRouteListAdapter routesAdapter = new AddChorestRouteListAdapter(routeslist);
+        LinearLayoutManager linLayManager = new LinearLayoutManager(this);
+        rvCalculatedRoutes.setAdapter(routesAdapter);
+        rvCalculatedRoutes.setLayoutManager(linLayManager);
+
+
+
+
+
+
+
+
+
+        // Initialize the SDK for places api
+        Places.initialize(getApplicationContext(), getResources().getString(R.string.places_key));
+
+
+        // Create a new PlacesClient instance
+        PlacesClient placesClient = Places.createClient(this);
+
+
 
         // Request location
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -110,6 +180,7 @@ public class AddChorestActivity extends AppCompatActivity {
             Log.i(TAG, "Permission ALREADY granted");
             getLastLocation();
         }
+
 
         // Save the chorest info to firebase
         btCalculateMap.setOnClickListener(new View.OnClickListener() {
@@ -144,51 +215,114 @@ public class AddChorestActivity extends AppCompatActivity {
             }
         });
 
+        // Add address' latitude and longitude
         btTypeAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+            // Add latitude and longitude here?
+
+            }
+        });
+
+        // Add each chore to an arraylist of strings
+        btAddLocations.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String chore = etAddLocations.getText().toString();
+
+                choreslist.add(chore);
+                choresAdapter.notifyItemInserted(choreslist.size()-1);
+                etAddLocations.setText("");
+            }
+        });
+
+        // Save info to Chorest Object and show the calculated route
+        btSubmitList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String name = etChorestName.getText().toString();
+
+                // Create new chorest object from user input
+                Chorest.createChorest(name, latitude, longitude, choreslist, new Chorest.CreateChorestCallback() {
+                    @Override
+                    public void onCallback(Chorest newChorest) {
+
+                        Log.i(TAG, "New Chorest created: " + newChorest.getName() + newChorest.getLocLat()+ newChorest.getLocLong() + newChorest.getId() + newChorest.getRoute());
+                    }
+
+                });
+
+                //Chorest cho = new Chorest.createChorest();
+
+                // Get calculated route as an array
+
+                // Put array in 2nd recyclerview
 
             }
         });
 
 
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        // Autocomplete feature for your address
+        // The edit text is non-focusable
+        etTypeAddress.setFocusable(false);
+        etTypeAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-        Query query = db.collection("users").document(currentUser.getUid()).collection("chorests");
+                // Initialize place field list
+                List<Place.Field> fields = Arrays.asList(Place.Field.ADDRESS, Place.Field.LAT_LNG, Place.Field.ID, Place.Field.NAME);
+
+                // Start the autocomplete intent.
+                Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
+                        .build(getBaseContext()); // get context
+                startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
+            }
+        });
+
+
+
+        // Set the recyclerview for rvCalculatedRoutes
+        //setRouteRecyclerView();
+        
+
+    }
+
+
+
+    /*private void setRouteRecyclerView() {
+        Query query = db.collection("users").document(mAuth.getCurrentUser().getUid())
+                .collection("chorests"); // can order by putting '.orderBy("field", Query.Direction.ASCENDING/DESCENDING);'
 
         //RecyclerOptions
         FirestoreRecyclerOptions<Chorest> options = new FirestoreRecyclerOptions.Builder<Chorest>()
                 .setQuery(query, Chorest.class)
                 .build();
 
-        adapter = new FirestoreRecyclerAdapter<Chorest, AddChorestActivity.AddChorestViewHolder>(options) {
+        adapter = new AddChorestAdapter(options);
 
-
-            @NonNull
-            @Override
-            public AddChorestActivity.AddChorestViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.model_home_list, parent, false);
-                return new AddChorestActivity.AddChorestViewHolder(view);
-            }
-
-            @Override
-            protected void onBindViewHolder(@NonNull AddChorestActivity.AddChorestViewHolder holder, int position, @NonNull Chorest model) {
-                holder.tvHomeName.setText(model.getName());
-
-
-                /*holder.ViewHolder.setOnClickListener(new HomeViewHolder.Clicklistener()){
-
-                }*/
-            }
-
-
-        };
+        RecyclerView rvCalculatedRoutes = findViewById(R.id.rvCalculatedRoutes);
         rvCalculatedRoutes.setHasFixedSize(true);
         rvCalculatedRoutes.setLayoutManager(new LinearLayoutManager(this));
         rvCalculatedRoutes.setAdapter(adapter);
+    }*/
 
+    /*@Override
+    public void onStop() {
+
+        super.onStop();
+        adapter.stopListening();
 
     }
+
+    @Override
+    public void onStart() {
+
+        super.onStart();
+        adapter.startListening();
+
+    }*/
 
     // Requests permission for location from user
     @Override
@@ -231,16 +365,23 @@ public class AddChorestActivity extends AppCompatActivity {
             case R.id.rbCurrentLocation:
                 if (checked)
                     Toast.makeText(AddChorestActivity.this, "Current Location", Toast.LENGTH_SHORT).show();
-                //get longitude and latitude from current gps
+
+                // Address text view and button is greyed out
+                etTypeAddress.setEnabled(false);
+                btTypeAddress.setEnabled(false);
 
                 // Implement GPS location feature
-                // Address text view is greyed out
+
                 break;
 
             case R.id.rbChooseLocation:
                 if(checked)
                     Toast.makeText(AddChorestActivity.this, "Choose A Location", Toast.LENGTH_SHORT).show();
-                // Address text view can be used
+
+                // Address text view and button can be used
+                etTypeAddress.setEnabled(true);
+                btTypeAddress.setEnabled(true);
+
                 // Implement Google Maps api
                 break;
         }
@@ -267,7 +408,7 @@ public class AddChorestActivity extends AppCompatActivity {
 
     }
 
-    private class AddChorestViewHolder extends RecyclerView.ViewHolder {
+/*    private class AddChorestViewHolder extends RecyclerView.ViewHolder {
 
         private TextView tvHomeName;
 
@@ -276,40 +417,38 @@ public class AddChorestActivity extends AppCompatActivity {
             tvHomeName = itemView.findViewById(R.id.tvHomeName);
 
         }
+    }*/
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Place place = Autocomplete.getPlaceFromIntent(data);
+                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
+
+
+                etTypeAddress.setText(place.getAddress());
+                LatLng latLng = place.getLatLng();
+
+               latitude = latLng.latitude;
+               longitude = latLng.longitude;
+                Log.i(TAG, "LatLng: " + place.getLatLng() + ", Lat: " + latitude + ", Lng: "+ longitude);
+
+            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+
+                Status status = Autocomplete.getStatusFromIntent(data);
+                Log.i(TAG, status.getStatusMessage());
+            } else if (resultCode == RESULT_CANCELED) {
+                // The user canceled the operation.
+
+                // Initialize the status
+                Status status = Autocomplete.getStatusFromIntent(data);
+
+                Toast.makeText(getApplicationContext(), status.getStatusMessage(), Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
-
-    /*    @Override
-    public void onMapReady(GoogleMap googleMap) {
-
-        if (checkPermissions()) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }
-            googleMap.setMyLocationEnabled(true);
-        }
-    }*/
-
-   /* private boolean checkPermissions() {
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        } else {
-            requestPermissions();
-            return false;
-        }
-    }*/
-
-    /*private void requestPermissions() {
-        ActivityCompat.requestPermissions(this,
-                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                REQUEST_FINE_LOCATION);
-    }*/
 }

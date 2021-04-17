@@ -21,6 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="20dp"
+            android:enabled="false"
             android:text="Add"
             app:layout_constraintStart_toEndOf="@+id/etTypeAddress"
             app:layout_constraintTop_toBottomOf="@+id/rgLocation" />
@@ -146,12 +147,11 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="8dp"
             android:ems="10"
-            android:hint="Street Address"
-            android:inputType="textPostalAddress"
+            android:hint="Chore Name"
+            android:inputType="text"
             android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView3"
-            tools:text="Street Address" />
+            app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
         <Button
             android:id="@+id/btAddLocations"
@@ -170,12 +170,12 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="20dp"
             android:ems="10"
+            android:enabled="false"
             android:hint="Street Address"
             android:inputType="textPostalAddress"
             android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rgLocation"
-            tools:text="Street Address" />
+            app:layout_constraintTop_toBottomOf="@+id/rgLocation" />
 
         <EditText
             android:id="@+id/etChorestName"
@@ -187,8 +187,7 @@
             android:hint="Chorest Name"
             android:inputType="textPersonName"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView"
-            tools:text="Chorest Name" />
+            app:layout_constraintTop_toBottomOf="@+id/textView" />
 
         <TextView
             android:id="@+id/textView"
